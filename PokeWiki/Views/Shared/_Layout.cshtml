@@ -1,50 +1,111 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PokeWiki</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - PokéWiki</title>
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PokeWiki.styles.css" asp-append-version="true" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PokeWiki</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+<body class="bg-poke-light font-sans text-poke-dark antialiased flex flex-col min-h-screen">
+
+    <header class="bg-poke-red border-b-4 border-poke-dark sticky top-0 z-50 shadow-lg">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a asp-controller="Home" asp-action="Index" class="flex items-center gap-3 group">
+                        <div class="relative w-9 h-9 bg-white rounded-full border-2 border-poke-dark flex items-center justify-center group-hover:rotate-180 transition-transform duration-500">
+                            <div class="absolute w-full h-0.5 bg-poke-dark"></div>
+                            <div class="w-3 h-3 bg-white border-2 border-poke-dark rounded-full z-10"></div>
+                        </div>
+                        <span class="text-white font-black text-2xl tracking-tighter uppercase">PokéWiki</span>
+                    </a>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-1">
+                    <a asp-controller="Pokemon" asp-action="Index"
+                       class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white hover:text-poke-red transition-colors uppercase tracking-wider">
+                        Pokédex
+                    </a>
+                    <a asp-controller="Moves" asp-action="Index"
+                       class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white hover:text-poke-red transition-colors uppercase tracking-wider">
+                        Movimientos
+                    </a>
+                    <a asp-controller="Forum" asp-action="Index"
+                       class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white hover:text-poke-red transition-colors uppercase tracking-wider">
+                        Comunidad
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="h-8 w-px bg-red-400 mx-2 hidden md:block"></div>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - PokeWiki - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <main role="main" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <nav class="flex mb-6 text-gray-500 text-xs uppercase tracking-widest font-bold" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="hover:text-poke-red">Inicio</a>
+                </li>
+                @if (ViewData["Section"] != null)
+                {
+                    <li>
+                        <div class="flex items-center">
+                            <span class="mx-2">/</span>
+                            <span class="text-poke-dark">@ViewData["Section"]</span>
+                        </div>
+                    </li>
+                }
+            </ol>
+        </nav>
+
+        <div class="animate-fadeIn">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="bg-poke-dark text-white border-t-8 border-poke-red mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
+                <div>
+                    <h4 class="font-black text-lg mb-4 uppercase tracking-tighter italic">PokéWiki</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Tu enciclopedia definitiva de Pokémon, construida con pasión y datos precisos de la comunidad.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm mb-4 uppercase text-gray-500 tracking-widest">Navegación</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-poke-red transition">Sobre el proyecto</a></li>
+                        <li><a href="#" class="hover:text-poke-red transition">API de datos</a></li>
+                        <li><a href="#" class="hover:text-poke-red transition">Reglas del Foro</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm mb-4 uppercase text-gray-500 tracking-widest">Estado</h4>
+                    <div class="flex items-center justify-center md:justify-start gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <span class="text-xs text-gray-400 italic">Servidor en línea - 2026</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-gray-800 text-center text-[10px] text-gray-500 uppercase tracking-[0.2em]">
+                &copy; @DateTime.Now.Year POKÉWIKI - Todos los derechos reservados. Pokémon es marca registrada de Nintendo.
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,0 +1,18 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    /* Clase personalizada para las tablas de datos de la Wiki */
+    .wiki-table {
+        @apply w-full text-left text-sm border-collapse border border-gray-200;
+    }
+
+        .wiki-table th {
+            @apply bg-gray-100 p-2 border border-gray-200 font-bold text-poke-dark;
+        }
+
+        .wiki-table td {
+            @apply p-2 border border-gray-200 bg-white;
+        }
+}
