@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="max-w-md mx-auto mt-20 bg-white p-8 border-t-8 border-poke-gold shadow-2xl rounded-lg">
+    <h2 class="text-3xl font-black uppercase tracking-tighter mb-6 text-poke-dark">Acceso al Sistema</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm font-bold">
+            @ViewBag.Error
+        </div>
+    }
+
+    <form asp-controller="Account" asp-action="Login" method="post" class="space-y-4">
+        <div>
+            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Email del Entrenador</label>
+            <input name="email" type="email" class="w-full border-2 border-gray-200 p-3 focus:border-poke-gold focus:ring-0 outline-none rounded transition-colors" required />
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Contraseña Secreta</label>
+            <input name="password" type="password" class="w-full border-2 border-gray-200 p-3 focus:border-poke-gold focus:ring-0 outline-none rounded transition-colors" required />
+        </div>
+        <button type="submit" class="w-full bg-poke-dark text-white font-black py-4 uppercase hover:bg-poke-gold hover:text-poke-dark transition-colors rounded mt-4">
+            Conectar
+        </button>
+    </form>
+    <div class="mt-6 text-center border-t border-gray-100 pt-4">
+        <p class="text-sm text-gray-500 font-medium">
+            ¿Aún no tienes licencia de entrenador?
+        </p>
+        <a asp-controller="Account" asp-action="Register" class="block mt-2 text-poke-red font-black uppercase text-sm hover:text-red-700 hover:underline transition-all">
+            Crear una cuenta nueva
+        </a>
+    </div>
+</div>

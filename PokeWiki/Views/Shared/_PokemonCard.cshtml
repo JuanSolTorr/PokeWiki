@@ -1,0 +1,24 @@
+﻿@model PokeWiki.Web.Models.ViewModels.PokemonListVM
+
+<a asp-controller="Pokemon" asp-action="Details" asp-route-id="@Model.Id"
+   class="group block bg-white rounded-lg shadow hover:shadow-xl hover:scale-105 transition-all p-2 border border-transparent hover:border-poke-red">
+    <div class="relative">
+        <span class="text-[10px] font-black text-gray-200 group-hover:text-gray-400 transition-colors">#@Model.Id.ToString("D4")</span>
+        <div class="aspect-square flex items-center justify-center py-4">
+            <img src="@Model.ImagenUrl" alt="@Model.Nombre" loading="lazy"
+                 class="w-24 h-24 object-contain group-hover:scale-110 transition-transform duration-300"
+                 onerror="this.src='/images/no-sprite.png'" />
+        </div>
+        <div class="text-center mt-2">
+            <h3 class="text-xs font-black uppercase truncate text-poke-dark group-hover:text-poke-red tracking-tighter transition-colors">
+                @Model.Nombre
+            </h3>
+            <div class="flex justify-center gap-1 mt-2">
+                @foreach (var tipo in Model.Tipos)
+                {
+                    <span class="w-1.5 h-1.5 rounded-full bg-gray-200 group-hover:bg-poke-red/50 transition-colors"></span>
+                }
+            </div>
+        </div>
+    </div>
+</a>

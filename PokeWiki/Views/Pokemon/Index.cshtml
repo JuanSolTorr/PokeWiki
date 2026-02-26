@@ -2,66 +2,66 @@
 
 @{
     ViewData["Title"] = "Pokédex Nacional";
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    string? busquedaActual = ViewData["CurrentSearch"]?.ToString();
+    int totalRegistros = ViewBag.TotalRegistros ?? Model.Count();
 }
 
 <div class="space-y-6">
     <div class="border-l-8 border-poke-red pl-6 py-2 bg-white shadow-sm">
         <h1 class="text-4xl font-black uppercase tracking-tighter text-poke-dark">Índice General</h1>
-        <p class="text-gray-400 font-bold text-xs tracking-[0.3em] uppercase">Sincronizado con Base de Datos SQL Server 2026</p>
     </div>
 
     <div class="bg-poke-dark p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div class="relative w-full md:w-96">
-            <input type="text" id="pokeSearch" placeholder="BUSCAR NOMBRE O ID..."
-                   class="w-full bg-gray-800 border-none text-white placeholder-gray-500 py-2 px-4 focus:ring-2 focus:ring-poke-red uppercase text-xs font-bold tracking-widest" />
-        </div>
+        <form asp-controller="Pokemon" asp-action="Index" method="get" class="relative w-full md:w-96 flex gap-2">
+            <input type="text" name="search" value="@busquedaActual" placeholder="BUSCAR NOMBRE O ID..."
+                   class="w-full bg-gray-800 border-none text-white placeholder-gray-500 py-2 px-4 focus:ring-2 focus:ring-poke-red uppercase text-xs font-bold tracking-widest outline-none" />
+            <button type="submit" class="bg-poke-red text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest hover:bg-red-700 transition-colors">Buscar</button>
+            @if (!string.IsNullOrEmpty(busquedaActual))
+            {
+                <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest flex items-center">X</a>
+            }
+        </form>
         <div class="text-white text-[10px] font-bold uppercase tracking-widest">
-            Registros Totales: <span class="text-poke-red text-lg ml-2">@Model.Count()</span>
+            Registros Totales: <span class="text-poke-red text-lg ml-2">@totalRegistros</span>
         </div>
     </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1" id="pokeGrid">
-        @foreach (var pokemon in Model)
-        {
-            <a asp-action="Details" asp-route-id="@pokemon.Id" class="poke-card bg-white border border-gray-100 p-4 group hover:bg-poke-red transition-all duration-200">
-                <div class="relative">
-                    <span class="text-[10px] font-black text-gray-200 group-hover:text-white/30 transition-colors">#@pokemon.Id.ToString("D4")</span>
+    @if (!Model.Any())
+    {
+        <div class="text-center py-20 bg-white rounded-lg shadow border-2 border-gray-100 text-gray-400 uppercase text-xs font-bold tracking-widest">Sin Resultados</div>
+    }
+    else
+    {
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1">
+            @foreach (var pokemon in Model)
+            {
+                <partial name="_PokemonCard" model="pokemon" />
+            }
+        </div>
+    }
 
-                    <div class="aspect-square flex items-center justify-center py-4">
-                        <img src="@pokemon.ImagenUrl"
-                             alt="@pokemon.Nombre"
-                             loading="lazy"
-                             class="w-24 h-24 object-contain group-hover:scale-110 transition-transform duration-300"
-                             onerror="this.src='/images/no-sprite.png'" />
-                    </div>
-
-                    <div class="text-center mt-2">
-                        <h3 class="text-xs font-black uppercase truncate text-poke-dark group-hover:text-white tracking-tighter">
-                            @pokemon.Nombre
-                        </h3>
-                        <div class="flex justify-center gap-1 mt-2">
-                            @foreach (var tipo in pokemon.Tipos)
-                            {
-                                <span class="w-1.5 h-1.5 rounded-full bg-gray-200 group-hover:bg-white/50"></span>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </a>
-        }
-    </div>
+    @if (totalPaginas > 1)
+    {
+        <div class="flex justify-between items-center bg-white p-4 shadow-sm border-l-8 border-poke-dark mt-4">
+            @if (paginaActual > 1)
+            {
+                <a asp-action="Index" asp-route-page="@(paginaActual - 1)" asp-route-search="@busquedaActual" class="bg-poke-dark text-white text-[10px] font-black tracking-widest uppercase px-4 py-2 hover:bg-poke-red transition-colors">&larr; ANT</a>
+            }
+            else
+            {
+                <span class="bg-gray-100 text-gray-400 text-[10px] font-black tracking-widest uppercase px-4 py-2 cursor-not-allowed">&larr; ANT</span>
+            }
+            <span class="text-[10px] font-bold tracking-widest uppercase text-gray-500">PÁG <span class="text-poke-dark text-sm ml-1 mr-1">@paginaActual</span> DE @totalPaginas</span>
+            @if (paginaActual < totalPaginas)
+            {
+                <a asp-action="Index" asp-route-page="@(paginaActual + 1)" asp-route-search="@busquedaActual" class="bg-poke-dark text-white text-[10px] font-black tracking-widest uppercase px-4 py-2 hover:bg-poke-red transition-colors">SIG &rarr;</a>
+            }
+            else
+            {
+                <span class="bg-gray-100 text-gray-400 text-[10px] font-black tracking-widest uppercase px-4 py-2 cursor-not-allowed">SIG &rarr;</span>
+            }
+        </div>
+    }
 </div>
-
-@section Scripts {
-    <script>
-        // Filtrado Frontend ultra-rápido
-        document.getElementById('pokeSearch').addEventListener('input', function (e) {
-            const val = e.target.value.toLowerCase();
-            const cards = document.querySelectorAll('.poke-card');
-            cards.forEach(card => {
-                const text = card.innerText.toLowerCase();
-                card.style.display = text.includes(val) ? 'block' : 'none';
-            });
-        });
-    </script>
-}

@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Leemos la sesión para ver si hay alguien logueado
+    var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
+}
+
+<ul class="flex items-center space-x-4">
+    @if (!string.IsNullOrEmpty(userName))
+    {
+        <li>
+            <span class="text-gray-300 text-sm font-bold">Entrenador: <span class="text-white">@userName</span></span>
+        </li>
+        <li>
+            <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
+                <button type="submit" class="bg-poke-red text-white text-xs px-3 py-2 uppercase font-black hover:bg-red-700 transition">
+                    Salir
+                </button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li>
+            <a asp-controller="Account" asp-action="Register" class="text-white text-sm font-bold hover:text-poke-gold transition">
+                Registrarse
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Account" asp-action="Login" class="bg-poke-gold text-poke-dark text-xs px-3 py-2 uppercase font-black hover:bg-yellow-500 transition">
+                Entrar
+            </a>
+        </li>
+    }
+</ul>

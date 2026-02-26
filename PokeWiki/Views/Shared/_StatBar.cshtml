@@ -1,0 +1,14 @@
+﻿@model (string Label, int Value, string ColorClass)
+
+@{
+    var width = (Model.Value / 255.0) * 100;
+    if (width > 100) width = 100;
+}
+
+<div class="flex items-center gap-4">
+    <span class="w-24 text-[10px] font-black text-gray-500 uppercase tracking-widest">@Model.Label</span>
+    <span class="w-8 text-right font-black text-poke-dark text-sm">@Model.Value</span>
+    <div class="flex-grow bg-gray-100 h-2">
+        <div class="@Model.ColorClass h-2 transition-all duration-500" style="width: @width.ToString().Replace(',', '.')%"></div>
+    </div>
+</div>

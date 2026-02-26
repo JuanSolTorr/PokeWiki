@@ -1,5 +1,83 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model PokeWiki.Web.Data.Views.MovimientosView
+
 @{
+    ViewData["Title"] = "Detalle MT - " + Model.movimiento;
+    var pokemonCompatibles = ViewBag.PokemonCompatibles as IEnumerable<dynamic>;
 }
+
+<div class="space-y-6 max-w-6xl mx-auto pb-12">
+    <div class="bg-poke-dark p-6 flex flex-col md:flex-row items-center gap-8 shadow-sm border-l-8 border-poke-red relative overflow-hidden text-white uppercase tracking-widest">
+        <div class="absolute -right-10 -top-10 opacity-5 text-9xl font-black italic">
+            @Model.mt_numero
+        </div>
+
+        <div class="text-center md:text-left flex-grow z-10">
+            <span class="text-poke-red font-black text-sm block mb-2">REGISTRO OFICIAL: @Model.mt_numero.ToUpper()</span>
+            <h1 class="text-5xl font-black uppercase tracking-tighter mb-4">@Model.movimiento</h1>
+            <div class="flex flex-wrap justify-center md:justify-start gap-4">
+                <span class="px-4 py-1 bg-white text-poke-dark text-[10px] font-black shadow-md">
+                    TIPO: @Model.tipo
+                </span>
+                <span class="px-4 py-1 bg-gray-800 text-white text-[10px] font-black border-b-2 border-poke-red">
+                    CLASE: @Model.clase_daño
+                </span>
+            </div>
+        </div>
+
+        <div class="z-10">
+            <a asp-action="Index" class="bg-gray-800 text-white px-6 py-3 text-[10px] font-black border border-gray-700 hover:bg-poke-red transition-all shadow-lg">
+                VOLVER AL ÍNDICE
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-6 shadow-sm border-t-4 border-poke-dark text-center group hover:border-poke-red transition-colors">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Potencia de Ataque</p>
+            <p class="text-4xl font-black text-poke-dark group-hover:text-poke-red transition-colors">@(Model.power > 0 ? Model.power.ToString() : "—")</p>
+        </div>
+        <div class="bg-white p-6 shadow-sm border-t-4 border-poke-dark text-center group hover:border-poke-red transition-colors">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Porcentaje de Precisión</p>
+            <p class="text-4xl font-black text-poke-dark group-hover:text-poke-red transition-colors">@(Model.accuracy > 0 ? Model.accuracy.ToString() + "%" : "—")</p>
+        </div>
+        <div class="bg-white p-6 shadow-sm border-t-4 border-poke-dark text-center group hover:border-poke-red transition-colors">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">PP (Puntos de Poder)</p>
+            <p class="text-4xl font-black text-poke-dark group-hover:text-poke-red transition-colors">@Model.pp</p>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-xl border-t-4 border-poke-red">
+        <div class="bg-poke-dark p-4 flex justify-between items-center">
+            <h2 class="text-white font-black uppercase tracking-widest text-[10px]">Pokémon compatibles con esta técnica</h2>
+            <div class="flex items-center gap-2">
+                <span class="text-[9px] text-gray-400 uppercase font-bold">Total detectados:</span>
+                <span class="text-poke-red font-black text-xl">@(pokemonCompatibles?.Count() ?? 0)</span>
+            </div>
+        </div>
+
+        <div class="p-6">
+            @if (pokemonCompatibles != null && pokemonCompatibles.Any())
+            {
+                <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10 gap-3">
+                    @foreach (var pk in pokemonCompatibles)
+                    {
+                        <a asp-controller="Pokemon" asp-action="Details" asp-route-id="@pk.id"
+                           class="group flex flex-col items-center p-2 bg-gray-50 hover:bg-white border border-transparent hover:border-poke-red transition-all rounded-lg shadow-sm">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/@(pk.id).png"
+                                 class="w-14 h-14 object-contain group-hover:scale-110 transition-transform" />
+                            <p class="mt-1 text-[8px] font-black uppercase text-center text-gray-500 group-hover:text-poke-red truncate w-full">
+                                @pk.nombre
+                            </p>
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="py-16 text-center">
+                    <p class="text-gray-300 font-black uppercase text-xs tracking-[0.2em]">Sin datos de compatibilidad en esta región</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
