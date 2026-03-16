@@ -1,5 +1,12 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model ForumCommentVM
+
+<article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-l-4 border-poke-dark dark:border-gray-600 p-4 transition-colors duration-300">
+    <header class="flex flex-wrap items-center justify-between gap-2">
+        <p class="text-sm font-black uppercase tracking-wider text-poke-dark dark:text-white">@Model.UserName</p>
+        <time class="text-[10px] uppercase tracking-widest font-bold text-gray-500 dark:text-gray-400">
+            @Model.PublishedAt.ToString("dd/MM/yyyy HH:mm")
+        </time>
+    </header>
+
+    <p class="mt-3 text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">@Model.Message</p>
+</article>
