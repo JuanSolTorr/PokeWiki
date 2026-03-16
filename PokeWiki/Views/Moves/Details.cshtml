@@ -6,50 +6,50 @@
 }
 
 <div class="space-y-6 max-w-6xl mx-auto pb-12">
-    <div class="bg-poke-dark p-6 flex flex-col md:flex-row items-center gap-8 shadow-sm border-l-8 border-poke-red relative overflow-hidden text-white uppercase tracking-widest">
-        <div class="absolute -right-10 -top-10 opacity-5 text-9xl font-black italic">
+    <div class="bg-poke-dark dark:bg-black p-6 flex flex-col md:flex-row items-center gap-8 shadow-sm border-l-8 border-poke-red relative overflow-hidden text-white uppercase tracking-widest transition-colors duration-300">
+        <div class="absolute -right-10 -top-10 opacity-5 text-9xl font-black italic text-white dark:text-gray-500">
             @Model.mt_numero
         </div>
 
         <div class="text-center md:text-left flex-grow z-10">
-            <span class="text-poke-red font-black text-sm block mb-2">@Model.mt_numero?.ToUpper()</span>
-            <h1 class="text-5xl font-black uppercase tracking-tighter mb-4">@Model.movimiento</h1>
+            <span class="text-poke-red dark:text-red-400 font-black text-sm block mb-2 transition-colors">@Model.mt_numero?.ToUpper()</span>
+            <h1 class="text-5xl font-black uppercase tracking-tighter mb-4 text-white">@Model.movimiento</h1>
             <div class="flex flex-wrap justify-center md:justify-start gap-4">
                 <span class="px-4 py-1 bg-white text-poke-dark text-[10px] font-black shadow-md">
                     TIPO: @Model.tipo
                 </span>
-                <span class="px-4 py-1 bg-gray-800 text-white text-[10px] font-black border-b-2 border-poke-red">
+                <span class="px-4 py-1 bg-gray-800 text-white text-[10px] font-black border-b-2 border-poke-red dark:border-red-600 transition-colors">
                     CLASE: @Model.clase_daño
                 </span>
             </div>
         </div>
 
         <div class="z-10">
-            <a asp-action="Index" class="bg-gray-800 text-white px-6 py-3 text-[10px] font-black border border-gray-700 hover:bg-poke-red transition-all">
+            <a asp-action="Index" class="bg-gray-800 dark:bg-gray-900 text-white px-6 py-3 text-[10px] font-black border border-gray-700 dark:border-gray-800 hover:bg-poke-red dark:hover:bg-red-700 transition-all rounded">
                 VOLVER AL ÍNDICE
             </a>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-6 shadow-sm border-t-4 border-poke-dark text-center">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Potencia</p>
-            <p class="text-4xl font-black text-poke-dark">@(Model.power > 0 ? Model.power.ToString() : "—")</p>
+        <div class="bg-white dark:bg-gray-800 p-6 shadow-sm border-t-4 border-poke-dark dark:border-gray-600 text-center transition-colors duration-300 rounded">
+            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1 transition-colors">Potencia</p>
+            <p class="text-4xl font-black text-poke-dark dark:text-white transition-colors">@(Model.power > 0 ? Model.power.ToString() : "—")</p>
         </div>
-        <div class="bg-white p-6 shadow-sm border-t-4 border-poke-dark text-center">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Precisión</p>
-            <p class="text-4xl font-black text-poke-dark">@(Model.accuracy > 0 ? Model.accuracy.ToString() + "%" : "—")</p>
+        <div class="bg-white dark:bg-gray-800 p-6 shadow-sm border-t-4 border-poke-dark dark:border-gray-600 text-center transition-colors duration-300 rounded">
+            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1 transition-colors">Precisión</p>
+            <p class="text-4xl font-black text-poke-dark dark:text-white transition-colors">@(Model.accuracy > 0 ? Model.accuracy.ToString() + "%" : "—")</p>
         </div>
-        <div class="bg-white p-6 shadow-sm border-t-4 border-poke-dark text-center">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">PP Máximos</p>
-            <p class="text-4xl font-black text-poke-dark">@Model.pp</p>
+        <div class="bg-white dark:bg-gray-800 p-6 shadow-sm border-t-4 border-poke-dark dark:border-gray-600 text-center transition-colors duration-300 rounded">
+            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1 transition-colors">PP Máximos</p>
+            <p class="text-4xl font-black text-poke-dark dark:text-white transition-colors">@Model.pp</p>
         </div>
     </div>
 
-    <div class="bg-white shadow-xl border-t-4 border-poke-red">
-        <div class="bg-poke-dark p-4 flex justify-between items-center">
-            <h2 class="text-white font-black uppercase tracking-widest text-[10px]">Especies compatibles con esta técnica</h2>
-            <span class="text-poke-red font-black text-xl">@(pokemonList?.Count() ?? 0)</span>
+    <div class="bg-white dark:bg-gray-800 shadow-xl border-t-4 border-poke-red dark:border-red-600 transition-colors duration-300 rounded">
+        <div class="bg-poke-dark dark:bg-black p-4 flex justify-between items-center transition-colors rounded-t">
+            <h2 class="text-white dark:text-gray-100 font-black uppercase tracking-widest text-[10px] transition-colors">Especies compatibles con esta técnica</h2>
+            <span class="text-poke-red dark:text-red-500 font-black text-xl transition-colors">@(pokemonList?.Count() ?? 0)</span>
         </div>
         <div class="p-6">
             @if (pokemonList != null && pokemonList.Any())
@@ -58,10 +58,10 @@
                     @foreach (var pk in pokemonList)
                     {
                         <a asp-controller="Pokemon" asp-action="Details" asp-route-id="@pk.id"
-                           class="group flex flex-col items-center p-2 bg-gray-50 hover:bg-white border border-transparent hover:border-poke-red transition-all rounded shadow-sm">
+                           class="group flex flex-col items-center p-2 bg-gray-50 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600 border border-transparent hover:border-poke-red dark:hover:border-red-500 transition-all rounded shadow-sm">
                             <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/@(pk.id).png"
-                                 class="w-14 h-14 object-contain group-hover:scale-110 transition-transform" />
-                            <p class="mt-1 text-[8px] font-black uppercase text-center text-gray-500 group-hover:text-poke-red truncate w-full">
+                                 class="w-14 h-14 object-contain group-hover:scale-110 transition-transform drop-shadow" />
+                            <p class="mt-1 text-[8px] font-black uppercase text-center text-gray-500 dark:text-gray-300 group-hover:text-poke-red dark:group-hover:text-red-400 truncate w-full transition-colors">
                                 @pk.nombre
                             </p>
                         </a>
@@ -70,7 +70,7 @@
             }
             else
             {
-                <div class="py-12 text-center text-gray-300 font-bold uppercase text-[10px] tracking-widest italic">
+                <div class="py-12 text-center text-gray-300 dark:text-gray-600 font-bold uppercase text-[10px] tracking-widest italic transition-colors">
                     No hay registros de compatibilidad detectados.
                 </div>
             }

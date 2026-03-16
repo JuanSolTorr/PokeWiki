@@ -1,0 +1,107 @@
+@model IEnumerable<PokeWiki.Web.Models.ViewModels.ObjetoVM>
+
+@{
+    ViewData["Title"] = "Objetos";
+    var categoriaActual = ViewData["CategoriaActual"]?.ToString();
+    var busquedaActual = ViewData["CurrentSearch"]?.ToString();
+    var categorias = ViewData["Categorias"] as string[] ?? Array.Empty<string>();
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    int totalRegistros = ViewBag.TotalRegistros ?? Model.Count();
+}
+
+<div class="space-y-6">
+    <div class="border-l-8 border-poke-red pl-6 py-2 bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
+        <h1 class="text-4xl font-black uppercase tracking-tighter text-poke-dark dark:text-white transition-colors">Inventario de Objetos</h1>
+    </div>
+
+    <div class="bg-poke-dark dark:bg-black p-4 rounded-lg shadow-sm space-y-3">
+        <form asp-action="Index" method="get" class="flex flex-col md:flex-row gap-2 md:items-center">
+            <input type="hidden" name="categoria" value="@categoriaActual" />
+            <input type="text"
+                   name="search"
+                   value="@busquedaActual"
+                   placeholder="BUSCAR OBJETO POR NOMBRE..."
+                   class="w-full md:w-96 bg-gray-800 dark:bg-gray-900 border-none text-white dark:text-gray-100 placeholder-gray-500 py-2 px-4 focus:ring-2 focus:ring-poke-red uppercase text-xs font-bold tracking-widest outline-none transition-colors rounded" />
+            <button type="submit" class="bg-poke-red text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest hover:bg-red-700 transition-colors rounded">Buscar</button>
+            @if (!string.IsNullOrWhiteSpace(busquedaActual))
+            {
+                <a asp-action="Index" asp-route-categoria="@categoriaActual" class="bg-gray-600 text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest flex items-center justify-center rounded">X</a>
+            }
+        </form>
+
+        <div class="flex flex-wrap gap-2">
+            <a asp-action="Index" asp-route-search="@busquedaActual"
+               class="px-3 py-2 text-[10px] font-black uppercase tracking-wider rounded border transition-colors @(string.IsNullOrEmpty(categoriaActual) ? "bg-poke-red border-poke-red text-white" : "bg-gray-700 border-gray-600 text-gray-200 hover:bg-poke-red hover:border-poke-red")">
+                Todos
+            </a>
+            @foreach (var categoria in categorias)
+            {
+                <a asp-action="Index" asp-route-categoria="@categoria" asp-route-search="@busquedaActual"
+                   class="px-3 py-2 text-[10px] font-black uppercase tracking-wider rounded border transition-colors @(string.Equals(categoriaActual, categoria, StringComparison.OrdinalIgnoreCase) ? "bg-poke-red border-poke-red text-white" : "bg-gray-700 border-gray-600 text-gray-200 hover:bg-poke-red hover:border-poke-red")">
+                    @categoria
+                </a>
+            }
+        </div>
+
+        <div class="text-white dark:text-gray-300 text-[10px] font-bold uppercase tracking-widest transition-colors">
+            Registros Totales: <span class="text-poke-red text-lg ml-2">@totalRegistros</span>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-20 bg-white dark:bg-gray-800 rounded-lg shadow border-2 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500 uppercase text-xs font-bold tracking-widest transition-colors">
+            No hay objetos para los filtros seleccionados
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            @foreach (var objeto in Model)
+            {
+                <a asp-action="Details" asp-route-id="@objeto.Id" class="block group bg-white dark:bg-gray-800 rounded-lg border-l-4 border-poke-red shadow-sm p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-[10px] uppercase font-black tracking-widest text-gray-400 dark:text-gray-500">@objeto.Categoria</p>
+                            <h2 class="text-xl font-black text-poke-dark dark:text-white tracking-tight group-hover:text-poke-red transition-colors">@objeto.Nombre</h2>
+                        </div>
+                        <span class="text-2xl" aria-hidden="true">@objeto.Icono</span>
+                    </div>
+
+                    <p class="mt-3 text-sm font-semibold text-gray-600 dark:text-gray-300 line-clamp-2">@objeto.Descripcion</p>
+                    <p class="mt-2 text-xs font-bold uppercase tracking-wider text-poke-dark dark:text-gray-200 line-clamp-1">Efecto: @objeto.Efecto</p>
+
+                    <div class="mt-4 inline-flex items-center px-2.5 py-1 rounded bg-gray-100 dark:bg-gray-700 text-[10px] font-black uppercase tracking-widest text-gray-600 dark:text-gray-300">
+                        Rareza: @objeto.Rareza
+                    </div>
+                </a>
+            }
+        </div>
+    }
+
+    @if (totalPaginas > 1)
+    {
+        <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-4 shadow-sm border-l-8 border-poke-dark dark:border-gray-600 mt-4 transition-colors duration-300 rounded-r-lg">
+            @if (paginaActual > 1)
+            {
+                <a asp-action="Index" asp-route-page="@(paginaActual - 1)" asp-route-search="@busquedaActual" asp-route-categoria="@categoriaActual" class="bg-poke-dark dark:bg-black text-white text-[10px] font-black tracking-widest uppercase px-4 py-2 hover:bg-poke-red dark:hover:bg-red-900 transition-colors rounded">&larr; ANT</a>
+            }
+            else
+            {
+                <span class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 text-[10px] font-black tracking-widest uppercase px-4 py-2 cursor-not-allowed rounded transition-colors">&larr; ANT</span>
+            }
+
+            <span class="text-[10px] font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400 transition-colors">PÁG <span class="text-poke-dark dark:text-white text-sm ml-1 mr-1 transition-colors">@paginaActual</span> DE @totalPaginas</span>
+
+            @if (paginaActual < totalPaginas)
+            {
+                <a asp-action="Index" asp-route-page="@(paginaActual + 1)" asp-route-search="@busquedaActual" asp-route-categoria="@categoriaActual" class="bg-poke-dark dark:bg-black text-white text-[10px] font-black tracking-widest uppercase px-4 py-2 hover:bg-poke-red dark:hover:bg-red-900 transition-colors rounded">SIG &rarr;</a>
+            }
+            else
+            {
+                <span class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 text-[10px] font-black tracking-widest uppercase px-4 py-2 cursor-not-allowed rounded transition-colors">SIG &rarr;</span>
+            }
+        </div>
+    }
+</div>

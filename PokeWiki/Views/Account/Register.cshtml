@@ -2,30 +2,30 @@
     ViewData["Title"] = "Registro de Entrenador";
 }
 
-<div class="max-w-md mx-auto mt-20 bg-white p-8 border-t-8 border-poke-red shadow-2xl rounded-lg">
-    <h2 class="text-3xl font-black uppercase tracking-tighter mb-6 text-poke-dark">Nuevo Entrenador</h2>
+<div class="max-w-md mx-auto mt-20 bg-white dark:bg-gray-800 p-8 border-t-8 border-poke-red shadow-2xl rounded-lg transition-colors duration-300">
+    <h2 class="text-3xl font-black uppercase tracking-tighter mb-6 text-poke-dark dark:text-white transition-colors">Nuevo Entrenador</h2>
 
     @if (ViewBag.Error != null)
     {
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm font-bold">
+        <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-4 text-sm font-bold transition-colors">
             @ViewBag.Error
         </div>
     }
 
     <form asp-controller="Account" asp-action="Register" method="post" class="space-y-4">
         <div>
-            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Nombre de Usuario</label>
-            <input name="username" type="text" class="w-full border-2 border-gray-200 p-3 focus:border-poke-red focus:ring-0 outline-none rounded transition-colors" required />
+            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Nombre de Usuario</label>
+            <input name="username" type="text" class="w-full border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-poke-dark dark:text-white p-3 focus:border-poke-red dark:focus:border-red-500 focus:ring-0 outline-none rounded transition-colors" required />
         </div>
         <div>
-            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Email</label>
-            <input name="email" type="email" class="w-full border-2 border-gray-200 p-3 focus:border-poke-red focus:ring-0 outline-none rounded transition-colors" required />
+            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Email</label>
+            <input name="email" type="email" class="w-full border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-poke-dark dark:text-white p-3 focus:border-poke-red dark:focus:border-red-500 focus:ring-0 outline-none rounded transition-colors" required />
         </div>
         <div>
-            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Contraseña</label>
-            <input name="password" type="password" class="w-full border-2 border-gray-200 p-3 focus:border-poke-red focus:ring-0 outline-none rounded transition-colors" required />
+            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Contraseña</label>
+            <input name="password" type="password" class="w-full border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-poke-dark dark:text-white p-3 focus:border-poke-red dark:focus:border-red-500 focus:ring-0 outline-none rounded transition-colors" required />
         </div>
-        <button type="submit" class="w-full bg-poke-dark text-white font-black py-4 uppercase hover:bg-poke-red transition-colors rounded mt-4">
+        <button type="submit" class="w-full bg-poke-dark dark:bg-black text-white font-black py-4 uppercase hover:bg-poke-red dark:hover:bg-red-700 transition-colors rounded mt-4">
             Obtener Licencia
         </button>
     </form>

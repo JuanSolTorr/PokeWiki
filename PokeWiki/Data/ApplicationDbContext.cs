@@ -29,7 +29,7 @@ namespace PokeWiki.Web.Data
             builder.Entity<Usuario>()
                 .HasOne(u => u.UsuarioAuxiliar)
                 .WithOne(ua => ua.Usuario)
-                .HasForeignKey<UsuarioAuxiliar>(ua => ua.Id_Usuario)
+                .HasForeignKey<UsuarioAuxiliar>(ua => ua.UsuarioId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<PokemonBiologiaView>(e => {

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="@(Context.Request.Cookies["theme"] == "dark" ? "dark" : "")">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,6 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class', // Permitir que Tailwind obedezca a la clase 'dark'
             theme: {
                 extend: {
                     colors: {
@@ -35,7 +36,7 @@
         }
     </script>
 </head>
-<body class="bg-poke-light font-sans text-poke-dark antialiased flex flex-col min-h-screen">
+<body class="bg-poke-light dark:bg-gray-900 font-sans text-poke-dark dark:text-gray-100 antialiased flex flex-col min-h-screen transition-colors duration-300">
 
     @{
         var controladorActual = ViewContext.RouteData.Values["controller"]?.ToString();
@@ -46,14 +47,14 @@
 
     @if (!esPantallaAuth)
     {
-        <header class="bg-poke-red border-b-4 border-poke-dark sticky top-0 z-50 shadow-lg">
+        <header class="bg-poke-red dark:bg-red-900 border-b-4 border-poke-dark dark:border-black sticky top-0 z-50 shadow-lg transition-colors duration-300">
             <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <a asp-controller="Pokemon" asp-action="Index" class="flex items-center gap-3 group">
-                            <div class="relative w-9 h-9 bg-white rounded-full border-2 border-poke-dark flex items-center justify-center group-hover:rotate-180 transition-transform duration-500">
-                                <div class="absolute w-full h-0.5 bg-poke-dark"></div>
-                                <div class="w-3 h-3 bg-white border-2 border-poke-dark rounded-full z-10"></div>
+                            <div class="relative w-9 h-9 bg-white dark:bg-gray-800 rounded-full border-2 border-poke-dark dark:border-gray-900 flex items-center justify-center group-hover:rotate-180 transition-transform duration-500">
+                                <div class="absolute w-full h-0.5 bg-poke-dark dark:bg-gray-900"></div>
+                                <div class="w-3 h-3 bg-white dark:bg-gray-800 border-2 border-poke-dark dark:border-gray-900 rounded-full z-10"></div>
                             </div>
                             <span class="text-white font-black text-2xl tracking-tighter uppercase">PokéWiki</span>
                         </a>
@@ -61,21 +62,25 @@
 
                     <div class="hidden md:flex items-center space-x-1">
                         <a asp-controller="Pokemon" asp-action="Index"
-                           class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white hover:text-poke-red transition-colors uppercase tracking-wider">
+                           class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white dark:hover:bg-gray-800 hover:text-poke-red dark:hover:text-poke-red transition-colors uppercase tracking-wider">
                             Pokédex
                         </a>
                         <a asp-controller="Moves" asp-action="Index"
-                           class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white hover:text-poke-red transition-colors uppercase tracking-wider">
+                           class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white dark:hover:bg-gray-800 hover:text-poke-red transition-colors uppercase tracking-wider">
                             Movimientos
                         </a>
+                        <a asp-controller="Objects" asp-action="Index"
+                           class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white dark:hover:bg-gray-800 hover:text-poke-red transition-colors uppercase tracking-wider">
+                            Objetos
+                        </a>
                         <a asp-controller="Forum" asp-action="Index"
-                           class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white hover:text-poke-red transition-colors uppercase tracking-wider">
+                           class="text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-white dark:hover:bg-gray-800 hover:text-poke-red transition-colors uppercase tracking-wider">
                             Comunidad
                         </a>
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <div class="h-8 w-px bg-red-400 mx-2 hidden md:block"></div>
+                        <div class="h-8 w-px bg-red-400 dark:bg-red-700 mx-2 hidden md:block transition-colors"></div>
                         <partial name="_LoginPartial" />
                     </div>
                 </div>
@@ -86,14 +91,14 @@
     <main role="main" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
         @if (!esPantallaAuth)
         {
-            <nav class="flex mb-6 text-gray-500 text-xs uppercase tracking-widest font-bold" aria-label="Breadcrumb">
+            <nav class="flex mb-6 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-widest font-bold transition-colors" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
                     @if (ViewData["Section"] != null)
                     {
                         <li>
                             <div class="flex items-center">
                                 <span class="mx-2">/</span>
-                                <span class="text-poke-dark">@ViewData["Section"]</span>
+                                <span class="text-poke-dark dark:text-gray-300">@ViewData["Section"]</span>
                             </div>
                         </li>
                     }
@@ -106,17 +111,17 @@
         </div>
     </main>
 
-    <footer class="bg-poke-dark text-white border-t-8 border-poke-red mt-auto">
+    <footer class="bg-poke-dark dark:bg-black text-white border-t-8 border-poke-red dark:border-red-900 mt-auto transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 py-12">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
                 <div>
                     <h4 class="font-black text-lg mb-4 uppercase tracking-tighter italic">PokéWiki</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed">
+                    <p class="text-gray-400 dark:text-gray-500 text-sm leading-relaxed transition-colors">
                         Tu enciclopedia definitiva de Pokémon, construida con pasión y datos precisos de la comunidad.
                     </p>
                 </div>
                 <div>
-                    <h4 class="font-bold text-sm mb-4 uppercase text-gray-500 tracking-widest">Navegación</h4>
+                    <h4 class="font-bold text-sm mb-4 uppercase text-gray-500 dark:text-gray-600 tracking-widest transition-colors">Navegación</h4>
                     <ul class="space-y-2 text-sm">
                         <li><a href="#" class="hover:text-poke-red transition">Sobre el proyecto</a></li>
                         <li><a href="#" class="hover:text-poke-red transition">API de datos</a></li>
@@ -124,14 +129,14 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold text-sm mb-4 uppercase text-gray-500 tracking-widest">Estado</h4>
+                    <h4 class="font-bold text-sm mb-4 uppercase text-gray-500 dark:text-gray-600 tracking-widest transition-colors">Estado</h4>
                     <div class="flex items-center justify-center md:justify-start gap-2">
                         <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        <span class="text-xs text-gray-400 italic">Servidor en línea - 2026</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500 italic transition-colors">Servidor en línea - 2026</span>
                     </div>
                 </div>
             </div>
-            <div class="mt-12 pt-8 border-t border-gray-800 text-center text-[10px] text-gray-500 uppercase tracking-[0.2em]">
+            <div class="mt-12 pt-8 border-t border-gray-800 dark:border-gray-900 text-center text-[10px] text-gray-500 dark:text-gray-600 uppercase tracking-[0.2em] transition-colors duration-300">
                 &copy; @DateTime.Now.Year POKÉWIKI - Todos los derechos reservados. Pokémon es marca registrada de Nintendo.
             </div>
         </div>

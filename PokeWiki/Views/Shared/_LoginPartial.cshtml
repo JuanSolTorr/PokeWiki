@@ -2,7 +2,6 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
-    // Leemos la sesión para ver si hay alguien logueado
     var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
 }
 
@@ -10,7 +9,10 @@
     @if (!string.IsNullOrEmpty(userName))
     {
         <li>
-            <span class="text-gray-300 text-sm font-bold">Entrenador: <span class="text-white">@userName</span></span>
+            <!-- Modificado para ser un enlace al controlador Account y acción Profile -->
+            <a asp-controller="Account" asp-action="Profile" class="group cursor-pointer">
+                <span class="text-gray-300 text-sm font-bold">Entrenador: <span class="text-white group-hover:text-poke-gold transition-colors underline decoration-dotted underline-offset-4">@userName</span></span>
+            </a>
         </li>
         <li>
             <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
