@@ -1,7 +1,7 @@
-﻿        @model IEnumerable<PokeWiki.Web.Models.ViewModels.PokemonListVM>
+﻿@model IEnumerable<PokeWiki.Web.Models.ViewModels.PokemonListVM>
 
 @{
-    ViewData["Title"] = "Pokédex Nacional";
+    ViewData["Title"] = "National Pokédex";
     int paginaActual = ViewBag.PaginaActual ?? 1;
     int totalPaginas = ViewBag.TotalPaginas ?? 1;
     string? busquedaActual = ViewData["CurrentSearch"]?.ToString();
@@ -10,27 +10,27 @@
 
 <div class="space-y-6">
     <div class="border-l-8 border-poke-red pl-6 py-2 bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
-        <h1 class="text-4xl font-black uppercase tracking-tighter text-poke-dark dark:text-white transition-colors duration-300">Índice General</h1>
+        <h1 class="text-4xl font-black uppercase tracking-tighter text-poke-dark dark:text-white transition-colors duration-300">General Index</h1>
     </div>
 
     <div class="bg-poke-dark dark:bg-black p-4 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors duration-300 rounded-lg">
         <form asp-controller="Pokemon" asp-action="Index" method="get" class="relative w-full md:w-96 flex gap-2">
-            <input type="text" name="search" value="@busquedaActual" placeholder="BUSCAR NOMBRE O ID..."
+            <input type="text" name="search" value="@busquedaActual" placeholder="SEARCH NAME OR ID..."
                    class="w-full bg-gray-800 dark:bg-gray-900 border-none text-white dark:text-gray-100 placeholder-gray-500 py-2 px-4 focus:ring-2 focus:ring-poke-red uppercase text-xs font-bold tracking-widest outline-none rounded" />
-            <button type="submit" class="bg-poke-red text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest hover:bg-red-700 transition-colors rounded">Buscar</button>
+            <button type="submit" class="bg-poke-red text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest hover:bg-red-700 transition-colors rounded">Search</button>
             @if (!string.IsNullOrEmpty(busquedaActual))
             {
                 <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest flex items-center rounded">X</a>
             }
         </form>
         <div class="text-white dark:text-gray-300 text-[10px] font-bold uppercase tracking-widest transition-colors">
-            Registros Totales: <span class="text-poke-red text-lg ml-2">@totalRegistros</span>
+            Total Records: <span class="text-poke-red text-lg ml-2">@totalRegistros</span>
         </div>
     </div>
 
     @if (!Model.Any())
     {
-        <div class="text-center py-20 bg-white dark:bg-gray-800 rounded-lg shadow border-2 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500 uppercase text-xs font-bold tracking-widest transition-colors duration-300">Sin Resultados</div>
+        <div class="text-center py-20 bg-white dark:bg-gray-800 rounded-lg shadow border-2 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500 uppercase text-xs font-bold tracking-widest transition-colors duration-300">No Results</div>
     }
     else
     {
@@ -47,20 +47,20 @@
         <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-4 shadow-sm border-l-8 border-poke-dark dark:border-gray-600 mt-4 transition-colors duration-300 rounded-r-lg">
             @if (paginaActual > 1)
             {
-                <a asp-action="Index" asp-route-page="@(paginaActual - 1)" asp-route-search="@busquedaActual" class="bg-poke-dark dark:bg-black text-white text-[10px] font-black tracking-widest uppercase px-4 py-2 hover:bg-poke-red dark:hover:bg-red-900 transition-colors rounded">&larr; ANT</a>
+                <a asp-action="Index" asp-route-page="@(paginaActual - 1)" asp-route-search="@busquedaActual" class="bg-poke-dark dark:bg-black text-white text-[10px] font-black tracking-widest uppercase px-4 py-2 hover:bg-poke-red dark:hover:bg-red-900 transition-colors rounded">&larr; PREV</a>
             }
             else
             {
-                <span class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 text-[10px] font-black tracking-widest uppercase px-4 py-2 cursor-not-allowed rounded transition-colors">&larr; ANT</span>
+                <span class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 text-[10px] font-black tracking-widest uppercase px-4 py-2 cursor-not-allowed rounded transition-colors">&larr; PREV</span>
             }
-            <span class="text-[10px] font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400 transition-colors">PÁG <span class="text-poke-dark dark:text-white text-sm ml-1 mr-1 transition-colors">@paginaActual</span> DE @totalPaginas</span>
+            <span class="text-[10px] font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400 transition-colors">PAGE <span class="text-poke-dark dark:text-white text-sm ml-1 mr-1 transition-colors">@paginaActual</span> OF @totalPaginas</span>
             @if (paginaActual < totalPaginas)
             {
-                <a asp-action="Index" asp-route-page="@(paginaActual + 1)" asp-route-search="@busquedaActual" class="bg-poke-dark dark:bg-black text-white text-[10px] font-black tracking-widest uppercase px-4 py-2 hover:bg-poke-red dark:hover:bg-red-900 transition-colors rounded">SIG &rarr;</a>
+                <a asp-action="Index" asp-route-page="@(paginaActual + 1)" asp-route-search="@busquedaActual" class="bg-poke-dark dark:bg-black text-white text-[10px] font-black tracking-widest uppercase px-4 py-2 hover:bg-poke-red dark:hover:bg-red-900 transition-colors rounded">NEXT &rarr;</a>
             }
             else
             {
-                <span class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 text-[10px] font-black tracking-widest uppercase px-4 py-2 cursor-not-allowed rounded transition-colors">SIG &rarr;</span>
+                <span class="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 text-[10px] font-black tracking-widest uppercase px-4 py-2 cursor-not-allowed rounded transition-colors">NEXT &rarr;</span>
             }
         </div>
     }

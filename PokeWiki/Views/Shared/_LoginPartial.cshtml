@@ -9,15 +9,15 @@
     @if (!string.IsNullOrEmpty(userName))
     {
         <li>
-            <!-- Modificado para ser un enlace al controlador Account y acción Profile -->
+            <!-- Changed to be a link to Account controller and Profile action -->
             <a asp-controller="Account" asp-action="Profile" class="group cursor-pointer">
-                <span class="text-gray-300 text-sm font-bold">Entrenador: <span class="text-white group-hover:text-poke-gold transition-colors underline decoration-dotted underline-offset-4">@userName</span></span>
+                <span class="text-gray-300 text-sm font-bold">Trainer: <span class="text-white group-hover:text-poke-gold transition-colors underline decoration-dotted underline-offset-4">@userName</span></span>
             </a>
         </li>
         <li>
             <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
                 <button type="submit" class="bg-poke-red text-white text-xs px-3 py-2 uppercase font-black hover:bg-red-700 transition">
-                    Salir
+                    Log out
                 </button>
             </form>
         </li>
@@ -26,12 +26,12 @@
     {
         <li>
             <a asp-controller="Account" asp-action="Register" class="text-white text-sm font-bold hover:text-poke-gold transition">
-                Registrarse
+                Sign up
             </a>
         </li>
         <li>
             <a asp-controller="Account" asp-action="Login" class="bg-poke-gold text-poke-dark text-xs px-3 py-2 uppercase font-black hover:bg-yellow-500 transition">
-                Entrar
+                Sign in
             </a>
         </li>
     }

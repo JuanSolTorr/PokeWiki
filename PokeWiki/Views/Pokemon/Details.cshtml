@@ -2,13 +2,15 @@
 
 @{
     ViewData["Title"] = Model.Nombre;
+    var alturaTexto = Model.AlturaM.ToString("0.##");
+    var pesoTexto = Model.PesoKg.ToString("0.##");
 }
 
 <div class="space-y-6 max-w-5xl mx-auto pb-12">
     <div class="bg-poke-dark dark:bg-black p-6 flex flex-col md:flex-row items-center gap-8 shadow-sm border-l-8 border-poke-red relative overflow-hidden text-white uppercase tracking-widest transition-colors duration-300">
         <div class="absolute -right-10 -top-10 opacity-5 text-9xl font-black italic">#@Model.Id.ToString("D4")</div>
         <div class="relative z-10 bg-white/5 p-4 border border-white/10">
-            <span class="absolute top-2 left-2 text-white/50 font-black text-[10px]">Nº @Model.Id.ToString("D4")</span>
+            <span class="absolute top-2 left-2 text-white/50 font-black text-[10px]">No. @Model.Id.ToString("D4")</span>
             <img src="@Model.ImagenUrl" alt="@Model.Nombre" class="w-40 h-40 object-contain drop-shadow-2xl mt-4" onerror="this.src='/images/no-sprite.png'" />
         </div>
         <div class="text-center md:text-left flex-grow z-10">
@@ -21,7 +23,7 @@
             </div>
         </div>
         <div class="z-10 hidden md:block">
-            <a asp-action="Index" class="bg-gray-800 text-white px-6 py-3 text-[10px] font-black border border-gray-700 hover:bg-poke-red transition-colors">VOLVER</a>
+            <a asp-action="Index" class="bg-gray-800 text-white px-6 py-3 text-[10px] font-black border border-gray-700 hover:bg-poke-red transition-colors">BACK</a>
         </div>
     </div>
 
@@ -29,19 +31,19 @@
 
         <details class="group bg-white dark:bg-gray-800 shadow-sm border-l-4 border-gray-300 dark:border-gray-600 open:border-poke-red dark:open:border-red-500 transition-colors duration-300" open>
             <summary class="flex justify-between items-center font-black cursor-pointer p-4 uppercase tracking-widest text-poke-dark dark:text-white text-xs select-none">
-                <span>Detalles Generales</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
+                <span>General Details</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
             </summary>
             <div class="p-6 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 md:grid-cols-4 gap-6 bg-white dark:bg-gray-800 transition-colors">
-                <div class="bg-gray-50 dark:bg-gray-700 p-3 border-l-2 border-poke-dark dark:border-gray-400 transition-colors"><p class="text-[10px] font-bold text-gray-500 dark:text-gray-300 mb-1">ALTURA</p><p class="font-black text-lg text-poke-dark dark:text-white">@Model.AlturaM m</p></div>
-                <div class="bg-gray-50 dark:bg-gray-700 p-3 border-l-2 border-poke-dark dark:border-gray-400 transition-colors"><p class="text-[10px] font-bold text-gray-500 dark:text-gray-300 mb-1">PESO</p><p class="font-black text-lg text-poke-dark dark:text-white">@Model.PesoKg kg</p></div>
+                <div class="bg-gray-50 dark:bg-gray-700 p-3 border-l-2 border-poke-dark dark:border-gray-400 transition-colors"><p class="text-[10px] font-bold text-gray-500 dark:text-gray-300 mb-1">HEIGHT</p><p class="font-black text-lg text-poke-dark dark:text-white">@alturaTexto m</p></div>
+                <div class="bg-gray-50 dark:bg-gray-700 p-3 border-l-2 border-poke-dark dark:border-gray-400 transition-colors"><p class="text-[10px] font-bold text-gray-500 dark:text-gray-300 mb-1">WEIGHT</p><p class="font-black text-lg text-poke-dark dark:text-white">@pesoTexto kg</p></div>
                 <div class="bg-gray-50 dark:bg-gray-700 p-3 border-l-2 border-poke-dark dark:border-gray-400 transition-colors"><p class="text-[10px] font-bold text-gray-500 dark:text-gray-300 mb-1">GEN</p><p class="font-black text-sm uppercase text-poke-dark dark:text-white">@Model.Generacion</p></div>
-                <div class="bg-gray-50 dark:bg-gray-700 p-3 border-l-2 border-poke-dark dark:border-gray-400 transition-colors"><p class="text-[10px] font-bold text-gray-500 dark:text-gray-300 mb-1">XP BASE</p><p class="font-black text-lg text-poke-dark dark:text-white">@Model.XpBase</p></div>
+                <div class="bg-gray-50 dark:bg-gray-700 p-3 border-l-2 border-poke-dark dark:border-gray-400 transition-colors"><p class="text-[10px] font-bold text-gray-500 dark:text-gray-300 mb-1">BASE XP</p><p class="font-black text-lg text-poke-dark dark:text-white">@Model.XpBase</p></div>
             </div>
         </details>
 
         <details class="group bg-white dark:bg-gray-800 shadow-sm border-l-4 border-gray-300 dark:border-gray-600 open:border-poke-red dark:open:border-red-500 transition-colors duration-300">
             <summary class="flex justify-between items-center font-black cursor-pointer p-4 uppercase tracking-widest text-poke-dark dark:text-white text-xs select-none">
-                <span>Estadísticas de Combate</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
+                <span>Battle Stats</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
             </summary>
             <div class="p-6 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 space-y-4 max-w-2xl mx-auto transition-colors">
                 <partial name="_StatBar" model='("HP", Model.Hp, "bg-green-500")' />
@@ -55,7 +57,7 @@
 
         <details class="group bg-white dark:bg-gray-800 shadow-sm border-l-4 border-gray-300 dark:border-gray-600 open:border-poke-red dark:open:border-red-500 transition-colors duration-300">
             <summary class="flex justify-between items-center font-black cursor-pointer p-4 uppercase tracking-widest text-poke-dark dark:text-white text-xs select-none">
-                <span>Cadena Evolutiva</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
+                <span>Evolution Chain</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
             </summary>
             <div class="p-6 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors">
                 <div class="flex flex-wrap justify-center gap-4">
@@ -65,7 +67,7 @@
                                         @(evo.IdPokemon == Model.Id ? "border-poke-red bg-red-50 dark:bg-red-900/30" : "border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-400") transition-all">
 
                             <span class="mb-3 px-2 py-1 rounded text-[8px] font-black uppercase text-center
-                                             @(evo.DetallesEvolucion == "FORMA BASE" ? "bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-300" : "bg-poke-red text-white")">
+                                             @(evo.DetallesEvolucion == "BASE FORM" ? "bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-300" : "bg-poke-red text-white")">
                                 @evo.DetallesEvolucion
                             </span>
 
@@ -73,7 +75,7 @@
                                 <img src="@evo.ImagenUrl" class="w-20 h-20 md:w-24 md:h-24 object-contain transition-transform group-hover/img:scale-110" />
                                 @if (evo.IdPokemon == Model.Id)
                                 {
-                                    <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-poke-dark dark:bg-black text-white text-[7px] px-2 py-0.5 rounded-full font-bold uppercase transition-colors">Actual</span>
+                                    <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-poke-dark dark:bg-black text-white text-[7px] px-2 py-0.5 rounded-full font-bold uppercase transition-colors">Current</span>
                                 }
                             </a>
 
@@ -86,12 +88,12 @@
 
         <details class="group bg-white dark:bg-gray-800 shadow-sm border-l-4 border-gray-300 dark:border-gray-600 open:border-poke-red dark:open:border-red-500 transition-colors duration-300">
             <summary class="flex justify-between items-center font-black cursor-pointer p-4 uppercase tracking-widest text-poke-dark dark:text-white text-xs select-none">
-                <span>Movimientos por Nivel</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
+                <span>Level-up Moves</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
             </summary>
             <div class="p-0 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-x-auto transition-colors">
                 <table class="w-full text-left text-[10px] font-bold uppercase tracking-wider text-poke-dark dark:text-gray-200">
                     <thead class="bg-poke-dark dark:bg-black text-white border-b-4 border-poke-red dark:border-red-600 transition-colors">
-                        <tr><th class="p-4">NIVEL</th><th class="p-4">NOMBRE</th><th class="p-4 text-center">TIPO</th><th class="p-4 text-right">POT.</th><th class="p-4 text-right">PREC.</th></tr>
+                        <tr><th class="p-4">LEVEL</th><th class="p-4">NAME</th><th class="p-4 text-center">TYPE</th><th class="p-4 text-right">POW.</th><th class="p-4 text-right">ACC.</th></tr>
                     </thead>
                     <tbody>
                         @foreach (var m in Model.MovimientosNivel)
@@ -111,12 +113,12 @@
 
         <details class="group bg-white dark:bg-gray-800 shadow-sm border-l-4 border-gray-300 dark:border-gray-600 open:border-poke-red dark:open:border-red-500 transition-colors duration-300">
             <summary class="flex justify-between items-center font-black cursor-pointer p-4 uppercase tracking-widest text-poke-dark dark:text-white text-xs select-none">
-                <span>Movimientos por MT</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
+                <span>TM Moves</span><span class="group-open:rotate-180 text-poke-red dark:text-red-500 transition-transform">▼</span>
             </summary>
             <div class="p-0 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-x-auto transition-colors">
                 <table class="w-full text-left text-[10px] font-bold uppercase tracking-wider text-poke-dark dark:text-gray-200">
                     <thead class="bg-poke-dark dark:bg-black text-white border-b-4 border-poke-red dark:border-red-600 transition-colors">
-                        <tr><th class="p-4">MT</th><th class="p-4">NOMBRE</th><th class="p-4 text-center">TIPO</th><th class="p-4 text-right">POT.</th><th class="p-4 text-right">PREC.</th></tr>
+                        <tr><th class="p-4">TM</th><th class="p-4">NAME</th><th class="p-4 text-center">TYPE</th><th class="p-4 text-right">POW.</th><th class="p-4 text-right">ACC.</th></tr>
                     </thead>
                     <tbody>
                         @foreach (var m in Model.MovimientosMT)

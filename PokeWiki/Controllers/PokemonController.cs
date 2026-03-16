@@ -61,7 +61,7 @@ namespace PokeWiki.Web.Controllers
             var vm = new PokemonDetailsVM
             {
                 Id = p.id,
-                Nombre = p.nombre ?? "DESCONOCIDO",
+                Nombre = p.nombre ?? "UNKNOWN",
                 Generacion = p.generacion ?? "-",
                 Especie = p.especie ?? "-",
                 AlturaM = p.altura_m,
@@ -97,16 +97,16 @@ namespace PokeWiki.Web.Controllers
 
                 vm.Evoluciones = evosSql.Select(e => {
                     var infoEvo = tablaEvo.FirstOrDefault(x => x.evolved_species_id == e.id);
-                    string metodo = "FORMA BASE";
+                    string metodo = "BASE FORM";
 
                     if (infoEvo != null)
                     {
-                        if (infoEvo.minimum_level > 0) metodo = $"NIVEL {infoEvo.minimum_level}";
-                        else if (infoEvo.trigger_item_id > 0) metodo = "USAR OBJETO";
-                        else if (infoEvo.minimum_happiness > 0) metodo = "AMISTAD";
-                        else if (infoEvo.evolution_trigger_id == 2) metodo = "INTERCAMBIO";
-                        else if (infoEvo.known_move_id > 0) metodo = "CONOCER MOV.";
-                        else metodo = "EVOLUCIÓN";
+                        if (infoEvo.minimum_level > 0) metodo = $"LEVEL {infoEvo.minimum_level}";
+                        else if (infoEvo.trigger_item_id > 0) metodo = "USE ITEM";
+                        else if (infoEvo.minimum_happiness > 0) metodo = "FRIENDSHIP";
+                        else if (infoEvo.evolution_trigger_id == 2) metodo = "TRADE";
+                        else if (infoEvo.known_move_id > 0) metodo = "KNOW MOVE";
+                        else metodo = "EVOLUTION";
                     }
 
                     return new EvolucionVM
@@ -136,7 +136,7 @@ namespace PokeWiki.Web.Controllers
                     Categoria = x.clase_daño ?? "-",
                     Potencia = (int?)x.power,
                     Precision = (int?)x.accuracy,
-                    NivelOMt = $"NV. {x.level}"
+                    NivelOMt = $"LV. {x.level}"
                 }).OrderBy(x => x.NivelOMt.Length).ThenBy(x => x.NivelOMt).ToList();
 
             vm.MovimientosMT = uniqueMoves.Where(x => x.identifier == "machine" || !string.IsNullOrWhiteSpace(x.mt_numero))
@@ -147,7 +147,7 @@ namespace PokeWiki.Web.Controllers
                     Categoria = x.clase_daño ?? "-",
                     Potencia = (int?)x.power,
                     Precision = (int?)x.accuracy,
-                    NivelOMt = string.IsNullOrWhiteSpace(x.mt_numero) ? "MT" : $"MT {x.mt_numero}"
+                    NivelOMt = string.IsNullOrWhiteSpace(x.mt_numero) ? "TM" : $"TM {x.mt_numero}"
                 }).OrderBy(x => x.NivelOMt).ToList();
 
             return View(vm);

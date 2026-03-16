@@ -14,32 +14,32 @@
             <p class="text-poke-gold text-xs font-black mb-2">@Model.Categoria</p>
             <h1 class="text-4xl font-black uppercase tracking-tighter mb-3">@Model.Nombre</h1>
             <div class="inline-flex items-center px-2.5 py-1 rounded bg-white text-poke-dark text-[10px] font-black uppercase tracking-widest">
-                Rareza: @Model.Rareza
+                Rarity: @Model.Rareza
             </div>
         </div>
 
         <div class="z-10">
-            <a asp-action="Index" class="bg-gray-800 dark:bg-gray-900 text-white px-6 py-3 text-[10px] font-black border border-gray-700 dark:border-gray-800 hover:bg-poke-red dark:hover:bg-red-700 transition-colors rounded">VOLVER</a>
+            <a asp-action="Index" class="bg-gray-800 dark:bg-gray-900 text-white px-6 py-3 text-[10px] font-black border border-gray-700 dark:border-gray-800 hover:bg-poke-red dark:hover:bg-red-700 transition-colors rounded">BACK</a>
         </div>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-l-4 border-poke-red p-6 transition-colors duration-300">
-        <h2 class="text-lg font-black uppercase tracking-widest text-poke-dark dark:text-white mb-3">Descripción del objeto</h2>
+        <h2 class="text-lg font-black uppercase tracking-widest text-poke-dark dark:text-white mb-3">Item description</h2>
         <p class="text-sm font-semibold text-gray-600 dark:text-gray-300 leading-relaxed">@Model.Descripcion</p>
 
-        <h3 class="text-sm font-black uppercase tracking-widest text-poke-dark dark:text-white mt-6 mb-2">Efecto</h3>
+        <h3 class="text-sm font-black uppercase tracking-widest text-poke-dark dark:text-white mt-6 mb-2">Effect</h3>
         <p class="text-sm font-semibold text-gray-600 dark:text-gray-300 leading-relaxed">@Model.Efecto</p>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-l-4 border-poke-red p-0 overflow-hidden transition-colors duration-300">
         <div class="bg-poke-dark dark:bg-black p-4 border-b-4 border-poke-red dark:border-red-700">
-            <h2 class="text-white font-black uppercase tracking-widest text-xs">Dónde se consigue por generación</h2>
+            <h2 class="text-white font-black uppercase tracking-widest text-xs">Where to find by generation</h2>
         </div>
 
         @if (!Model.DondeSeConsiguePorGeneracion.Any())
         {
             <div class="p-8 text-center text-gray-400 dark:text-gray-500 uppercase text-xs font-bold tracking-widest">
-                No hay datos de disponibilidad por generación para este objeto.
+                No availability data by generation for this item.
             </div>
         }
         else
@@ -48,9 +48,9 @@
                 <table class="w-full text-left text-[11px] font-bold uppercase tracking-wider text-poke-dark dark:text-gray-200">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th class="p-4">Generación</th>
-                            <th class="p-4 text-right">Índice</th>
-                            <th class="p-4">Juegos</th>
+                            <th class="p-4">Generation</th>
+                            <th class="p-4 text-right">Index</th>
+                            <th class="p-4">Games</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -13,7 +13,7 @@ namespace PokeWiki.Web.Controllers
         public IActionResult Index()
         {
             var model = BuildModel();
-            ViewData["Section"] = "Comunidad";
+            ViewData["Section"] = "Community";
             return View(model);
         }
 
@@ -29,7 +29,7 @@ namespace PokeWiki.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewData["Section"] = "Comunidad";
+                ViewData["Section"] = "Community";
                 model.Comments = GetOrderedComments();
                 return View("Index", model);
             }

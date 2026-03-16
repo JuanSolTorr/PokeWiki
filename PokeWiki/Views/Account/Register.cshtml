@@ -1,9 +1,9 @@
 ﻿@{
-    ViewData["Title"] = "Registro de Entrenador";
+    ViewData["Title"] = "Trainer Registration";
 }
 
 <div class="max-w-md mx-auto mt-20 bg-white dark:bg-gray-800 p-8 border-t-8 border-poke-red shadow-2xl rounded-lg transition-colors duration-300">
-    <h2 class="text-3xl font-black uppercase tracking-tighter mb-6 text-poke-dark dark:text-white transition-colors">Nuevo Entrenador</h2>
+    <h2 class="text-3xl font-black uppercase tracking-tighter mb-6 text-poke-dark dark:text-white transition-colors">New Trainer</h2>
 
     @if (ViewBag.Error != null)
     {
@@ -14,7 +14,7 @@
 
     <form asp-controller="Account" asp-action="Register" method="post" class="space-y-4">
         <div>
-            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Nombre de Usuario</label>
+            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Username</label>
             <input name="username" type="text" class="w-full border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-poke-dark dark:text-white p-3 focus:border-poke-red dark:focus:border-red-500 focus:ring-0 outline-none rounded transition-colors" required />
         </div>
         <div>
@@ -22,11 +22,11 @@
             <input name="email" type="email" class="w-full border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-poke-dark dark:text-white p-3 focus:border-poke-red dark:focus:border-red-500 focus:ring-0 outline-none rounded transition-colors" required />
         </div>
         <div>
-            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Contraseña</label>
+            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Password</label>
             <input name="password" type="password" class="w-full border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-poke-dark dark:text-white p-3 focus:border-poke-red dark:focus:border-red-500 focus:ring-0 outline-none rounded transition-colors" required />
         </div>
         <button type="submit" class="w-full bg-poke-dark dark:bg-black text-white font-black py-4 uppercase hover:bg-poke-red dark:hover:bg-red-700 transition-colors rounded mt-4">
-            Obtener Licencia
+            Get License
         </button>
     </form>
 </div>

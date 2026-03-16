@@ -1,28 +1,28 @@
 ﻿@model ForumIndexVM
 
 @{
-    ViewData["Title"] = "Comunidad";
+    ViewData["Title"] = "Community";
 }
 
 <div class="space-y-6">
     <div class="border-l-8 border-poke-red pl-6 py-2 bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
-        <h1 class="text-4xl font-black uppercase tracking-tighter text-poke-dark dark:text-white transition-colors">Foro de Entrenadores</h1>
-        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Comparte tus ideas, dudas y descubrimientos Pokémon con la comunidad.</p>
+        <h1 class="text-4xl font-black uppercase tracking-tighter text-poke-dark dark:text-white transition-colors">Trainer Forum</h1>
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Share your Pokémon ideas, questions, and discoveries with the community.</p>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-l-4 border-poke-red p-6 space-y-4">
-        <h2 class="text-sm font-black uppercase tracking-widest text-gray-600 dark:text-gray-300">Publicar comentario</h2>
+        <h2 class="text-sm font-black uppercase tracking-widest text-gray-600 dark:text-gray-300">Post comment</h2>
 
         <form asp-action="Create" method="post" class="space-y-3">
             <textarea asp-for="NewMessage"
                       rows="4"
-                      placeholder="Escribe tu comentario..."
+                      placeholder="Write your comment..."
                       class="w-full rounded-md bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-poke-dark dark:text-gray-100 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-poke-red"></textarea>
             <span asp-validation-for="NewMessage" class="text-red-600 text-xs font-bold"></span>
 
             <div class="flex justify-end">
                 <button type="submit" class="bg-poke-red text-white px-5 py-2 uppercase text-xs font-black tracking-widest rounded hover:bg-red-700 transition-colors">
-                    Enviar
+                    Send
                 </button>
             </div>
         </form>
@@ -32,7 +32,7 @@
         @if (!Model.Comments.Any())
         {
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center text-xs uppercase tracking-widest font-bold text-gray-400 dark:text-gray-500">
-                Aún no hay comentarios. ¡Sé el primero en publicar!
+                No comments yet. Be the first to post!
             </div>
         }
         else

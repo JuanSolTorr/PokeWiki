@@ -6,8 +6,8 @@ namespace PokeWiki.Web.Models.ViewModels
     {
         public List<ForumCommentVM> Comments { get; set; } = new();
 
-        [Required(ErrorMessage = "El comentario es obligatorio.")]
-        [StringLength(500, ErrorMessage = "El comentario no puede superar los 500 caracteres.")]
+        [Required(ErrorMessage = "Comment is required.")]
+        [StringLength(500, ErrorMessage = "Comment cannot exceed 500 characters.")]
         public string NewMessage { get; set; } = string.Empty;
     }
 }

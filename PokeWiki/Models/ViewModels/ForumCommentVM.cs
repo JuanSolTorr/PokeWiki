@@ -8,8 +8,8 @@ namespace PokeWiki.Web.Models.ViewModels
 
         public DateTime PublishedAt { get; set; }
 
-        [Required(ErrorMessage = "El comentario es obligatorio.")]
-        [StringLength(500, ErrorMessage = "El comentario no puede superar los 500 caracteres.")]
+        [Required(ErrorMessage = "Comment is required.")]
+        [StringLength(500, ErrorMessage = "Comment cannot exceed 500 characters.")]
         public string Message { get; set; } = string.Empty;
     }
 }

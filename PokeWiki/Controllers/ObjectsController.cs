@@ -17,7 +17,7 @@ namespace PokeWiki.Web.Controllers
 
         public async Task<IActionResult> Index(string? categoria, string? search, int page = 1)
         {
-            var categorias = new[] { "Evolución", "Buffos", "Bayas", "Curación", "Pokéballs", "Objetos Clave" };
+            var categorias = new[] { "Evolution", "Battle", "Berries", "Healing", "Poké Balls", "Key Items" };
             const int pageSize = 24;
 
             if (page < 1)
@@ -35,7 +35,7 @@ namespace PokeWiki.Web.Controllers
 
             var objetosDb = await LoadObjectsFromDatabaseAsync(categoria, search, page, pageSize);
 
-            ViewData["Section"] = "Objetos";
+            ViewData["Section"] = "Items";
             ViewData["CategoriaActual"] = categoria;
             ViewData["Categorias"] = categorias;
             ViewData["CurrentSearch"] = search;
@@ -54,7 +54,7 @@ namespace PokeWiki.Web.Controllers
                 return NotFound();
             }
 
-            ViewData["Section"] = "Objetos";
+            ViewData["Section"] = "Items";
             return View(objeto);
         }
 
@@ -73,12 +73,12 @@ SELECT COUNT(*)
 FROM (
     SELECT
         CASE
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%bayas%' OR LOWER(ic.identifier) LIKE '%berry%' THEN N'Bayas'
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%bolas%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%poké balls%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%poke balls%' OR LOWER(ic.identifier) LIKE '%ball%' THEN N'Pokéballs'
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%objetos clave%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%key items%' THEN N'Objetos Clave'
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%medicinas%' OR LOWER(ic.identifier) IN ('healing', 'status-cures', 'revival', 'medicine', 'vitamins', 'pp-recovery') THEN N'Curación'
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%objetos de combate%' OR LOWER(ic.identifier) IN ('stat-boosts', 'miracle-shooter') THEN N'Buffos'
-            WHEN LOWER(ic.identifier) LIKE '%evolution%' OR LOWER(ic.identifier) LIKE '%mega-stones%' OR LOWER(COALESCE(in_es.name, in_en.name, i.identifier)) LIKE '%piedra%' OR LOWER(COALESCE(in_es.name, in_en.name, i.identifier)) LIKE '%stone%' THEN N'Evolución'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%bayas%' OR LOWER(ic.identifier) LIKE '%berry%' THEN N'Berries'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%bolas%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%poké balls%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%poke balls%' OR LOWER(ic.identifier) LIKE '%ball%' THEN N'Poké Balls'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%objetos clave%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%key items%' THEN N'Key Items'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%medicinas%' OR LOWER(ic.identifier) IN ('healing', 'status-cures', 'revival', 'medicine', 'vitamins', 'pp-recovery') THEN N'Healing'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%objetos de combate%' OR LOWER(ic.identifier) IN ('stat-boosts', 'miracle-shooter') THEN N'Battle'
+            WHEN LOWER(ic.identifier) LIKE '%evolution%' OR LOWER(ic.identifier) LIKE '%mega-stones%' OR LOWER(COALESCE(in_es.name, in_en.name, i.identifier)) LIKE '%piedra%' OR LOWER(COALESCE(in_es.name, in_en.name, i.identifier)) LIKE '%stone%' THEN N'Evolution'
             ELSE NULL
         END AS categoria,
         COALESCE(in_es.name, in_en.name, i.identifier) AS nombre
@@ -127,7 +127,7 @@ SELECT
     t.nombre,
     t.efecto,
     t.cost,
-    t.categoria
+    t.categoria AS categoria
 FROM (
     SELECT
         i.id,
@@ -136,12 +136,12 @@ FROM (
         COALESCE(ip_es.short_effect, ip_en.short_effect, '') AS efecto,
         i.cost,
         CASE
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%bayas%' OR LOWER(ic.identifier) LIKE '%berry%' THEN N'Bayas'
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%bolas%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%poké balls%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%poke balls%' OR LOWER(ic.identifier) LIKE '%ball%' THEN N'Pokéballs'
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%objetos clave%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%key items%' THEN N'Objetos Clave'
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%medicinas%' OR LOWER(ic.identifier) IN ('healing', 'status-cures', 'revival', 'medicine', 'vitamins', 'pp-recovery') THEN N'Curación'
-            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%objetos de combate%' OR LOWER(ic.identifier) IN ('stat-boosts', 'miracle-shooter') THEN N'Buffos'
-            WHEN LOWER(ic.identifier) LIKE '%evolution%' OR LOWER(ic.identifier) LIKE '%mega-stones%' OR LOWER(COALESCE(in_es.name, in_en.name, i.identifier)) LIKE '%piedra%' OR LOWER(COALESCE(in_es.name, in_en.name, i.identifier)) LIKE '%stone%' THEN N'Evolución'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%bayas%' OR LOWER(ic.identifier) LIKE '%berry%' THEN N'Berries'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%bolas%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%poké balls%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%poke balls%' OR LOWER(ic.identifier) LIKE '%ball%' THEN N'Poké Balls'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%objetos clave%' OR LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%key items%' THEN N'Key Items'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%medicinas%' OR LOWER(ic.identifier) IN ('healing', 'status-cures', 'revival', 'medicine', 'vitamins', 'pp-recovery') THEN N'Healing'
+            WHEN LOWER(COALESCE(ipn_es.name, ipn_en.name, p.identifier)) LIKE '%objetos de combate%' OR LOWER(ic.identifier) IN ('stat-boosts', 'miracle-shooter') THEN N'Battle'
+            WHEN LOWER(ic.identifier) LIKE '%evolution%' OR LOWER(ic.identifier) LIKE '%mega-stones%' OR LOWER(COALESCE(in_es.name, in_en.name, i.identifier)) LIKE '%piedra%' OR LOWER(COALESCE(in_es.name, in_en.name, i.identifier)) LIKE '%stone%' THEN N'Evolution'
             ELSE NULL
         END AS categoria
     FROM items i
@@ -196,8 +196,8 @@ OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY";
                     Identificador = identifier,
                     Nombre = nombre,
                     Categoria = categoriaTexto,
-                    Descripcion = string.IsNullOrWhiteSpace(efecto) ? "Sin descripción disponible." : efecto,
-                    Efecto = string.IsNullOrWhiteSpace(efecto) ? "Sin efecto registrado." : efecto,
+                    Descripcion = string.IsNullOrWhiteSpace(efecto) ? "No description available." : efecto,
+                    Efecto = string.IsNullOrWhiteSpace(efecto) ? "No effect registered." : efecto,
                     Rareza = GetRarezaByCost(costo),
                     Icono = GetIcono(categoriaTexto),
                     ImagenUrl = BuildItemImageUrl(identifier)
@@ -271,8 +271,8 @@ WHERE i.id = @itemId";
                     Identificador = identifier,
                     Nombre = nombre,
                     Categoria = categoria,
-                    Descripcion = string.IsNullOrWhiteSpace(efecto) ? "Sin descripción disponible." : efecto,
-                    Efecto = string.IsNullOrWhiteSpace(efecto) ? "Sin efecto registrado." : efecto,
+                    Descripcion = string.IsNullOrWhiteSpace(efecto) ? "No description available." : efecto,
+                    Efecto = string.IsNullOrWhiteSpace(efecto) ? "No effect registered." : efecto,
                     Rareza = GetRarezaByCost(costo),
                     Icono = GetIcono(categoria),
                     ImagenUrl = BuildItemImageUrl(identifier)
@@ -323,9 +323,9 @@ ORDER BY igi.generation_id";
             {
                 result.Add(new ObjetoGeneracionVM
                 {
-                    Generacion = reader["generacion"]?.ToString() ?? "Desconocida",
+                    Generacion = reader["generacion"]?.ToString() ?? "Unknown",
                     IndiceJuego = reader["game_index"] != DBNull.Value ? Convert.ToInt64(reader["game_index"]) : 0,
-                    Juegos = reader["juegos"]?.ToString() ?? "Sin juegos registrados"
+                    Juegos = reader["juegos"]?.ToString() ?? "No games registered"
                 });
             }
 
@@ -342,44 +342,44 @@ ORDER BY igi.generation_id";
             var n = nombre.Trim().ToLowerInvariant();
 
             if (pocket.Contains("bayas") || id.Contains("berry"))
-                return "Bayas";
+                return "Berries";
 
             if (pocket.Contains("bolas") || pocket.Contains("poké balls") || pocket.Contains("poke balls") || id.Contains("ball"))
-                return "Pokéballs";
+                return "Poké Balls";
 
             if (pocket.Contains("objetos clave") || pocket.Contains("key items"))
-                return "Objetos Clave";
+                return "Key Items";
 
             if (pocket.Contains("medicinas") || id is "healing" or "status-cures" or "revival" or "medicine" or "vitamins" or "pp-recovery")
-                return "Curación";
+                return "Healing";
 
             if (pocket.Contains("objetos de combate") || id is "stat-boosts" or "miracle-shooter")
-                return "Buffos";
+                return "Battle";
 
             if (id.Contains("evolution") || id.Contains("mega-stones") || n.Contains("piedra") || n.Contains("stone"))
-                return "Evolución";
+                return "Evolution";
 
             return null;
         }
 
         private static string GetRarezaByCost(long cost)
         {
-            if (cost <= 0) return "Clave";
-            if (cost < 500) return "Común";
-            if (cost < 3000) return "Media";
-            return "Alta";
+            if (cost <= 0) return "Key";
+            if (cost < 500) return "Common";
+            if (cost < 3000) return "Medium";
+            return "High";
         }
 
         private static string GetIcono(string categoria)
         {
             return categoria switch
             {
-                "Evolución" => "?",
-                "Buffos" => "??",
-                "Bayas" => "??",
-                "Curación" => "??",
-                "Pokéballs" => "?",
-                "Objetos Clave" => "???",
+                "Evolution" => "?",
+                "Battle" => "??",
+                "Berries" => "??",
+                "Healing" => "??",
+                "Poké Balls" => "?",
+                "Key Items" => "???",
                 _ => "??"
             };
         }

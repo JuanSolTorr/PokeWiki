@@ -1,9 +1,9 @@
 ﻿@{
-    ViewData["Title"] = "Iniciar Sesión";
+    ViewData["Title"] = "Sign In";
 }
 
 <div class="max-w-md mx-auto mt-20 bg-white dark:bg-gray-800 p-8 border-t-8 border-poke-gold shadow-2xl rounded-lg transition-colors duration-300">
-    <h2 class="text-3xl font-black uppercase tracking-tighter mb-6 text-poke-dark dark:text-white transition-colors">Acceso al Sistema</h2>
+    <h2 class="text-3xl font-black uppercase tracking-tighter mb-6 text-poke-dark dark:text-white transition-colors">System Access</h2>
 
     @if (ViewBag.Error != null)
     {
@@ -14,23 +14,23 @@
 
     <form asp-controller="Account" asp-action="Login" method="post" class="space-y-4">
         <div>
-            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Email del Entrenador</label>
+            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Trainer Email</label>
             <input name="email" type="email" class="w-full border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-poke-dark dark:text-white p-3 focus:border-poke-gold dark:focus:border-poke-gold focus:ring-0 outline-none rounded transition-colors" required />
         </div>
         <div>
-            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Contraseña Secreta</label>
+            <label class="block text-xs font-bold uppercase text-gray-400 dark:text-gray-300 mb-1 transition-colors">Secret Password</label>
             <input name="password" type="password" class="w-full border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-poke-dark dark:text-white p-3 focus:border-poke-gold dark:focus:border-poke-gold focus:ring-0 outline-none rounded transition-colors" required />
         </div>
         <button type="submit" class="w-full bg-poke-dark dark:bg-black text-white font-black py-4 uppercase hover:bg-poke-gold hover:text-poke-dark transition-colors rounded mt-4">
-            Conectar
+            Connect
         </button>
     </form>
     <div class="mt-6 text-center border-t border-gray-100 dark:border-gray-700 pt-4 transition-colors">
         <p class="text-sm text-gray-500 dark:text-gray-400 font-medium transition-colors">
-            ¿Aún no tienes licencia de entrenador?
+            Don’t have a trainer license yet?
         </p>
         <a asp-controller="Account" asp-action="Register" class="block mt-2 text-poke-red dark:text-red-400 font-black uppercase text-sm hover:text-red-700 dark:hover:text-red-300 hover:underline transition-all">
-            Crear una cuenta nueva
+            Create a new account
         </a>
     </div>
 </div>

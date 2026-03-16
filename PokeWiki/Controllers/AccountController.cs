@@ -34,7 +34,7 @@ namespace PokeWiki.Web.Controllers
 
             if (user == null)
             {
-                ViewBag.Error = "Credenciales incorrectas.";
+                ViewBag.Error = "Invalid credentials.";
                 return View();
             }
 
@@ -86,11 +86,11 @@ namespace PokeWiki.Web.Controllers
             
             if (!success)
             {
-                ViewBag.PasswordError = "La contraseña actual es incorrecta o hubo un error.";
+                ViewBag.PasswordError = "Current password is incorrect or an error occurred.";
             }
             else
             {
-                ViewBag.PasswordSuccess = "Contraseña actualizada exitosamente.";
+                ViewBag.PasswordSuccess = "Password updated successfully.";
             }
 
             return View("Profile");
@@ -106,7 +106,7 @@ namespace PokeWiki.Web.Controllers
             
             if (!success)
             {
-                ViewBag.DeleteError = "Contraseña incorrecta para eliminar la cuenta.";
+                ViewBag.DeleteError = "Incorrect password. Account could not be deleted.";
                 return View("Profile");
             }
 

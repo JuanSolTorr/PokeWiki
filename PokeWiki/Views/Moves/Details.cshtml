@@ -1,7 +1,7 @@
 ﻿@model PokeWiki.Web.Data.Views.MovimientosView
 
 @{
-    ViewData["Title"] = "Registro Técnico: " + Model.movimiento;
+    ViewData["Title"] = "Technical Record: " + Model.movimiento;
     var pokemonList = ViewBag.PokemonCompatibles as IEnumerable<dynamic>;
 }
 
@@ -16,39 +16,39 @@
             <h1 class="text-5xl font-black uppercase tracking-tighter mb-4 text-white">@Model.movimiento</h1>
             <div class="flex flex-wrap justify-center md:justify-start gap-4">
                 <span class="px-4 py-1 bg-white text-poke-dark text-[10px] font-black shadow-md">
-                    TIPO: @Model.tipo
+                    TYPE: @Model.tipo
                 </span>
                 <span class="px-4 py-1 bg-gray-800 text-white text-[10px] font-black border-b-2 border-poke-red dark:border-red-600 transition-colors">
-                    CLASE: @Model.clase_daño
+                    CLASS: @Model.clase_daño
                 </span>
             </div>
         </div>
 
         <div class="z-10">
             <a asp-action="Index" class="bg-gray-800 dark:bg-gray-900 text-white px-6 py-3 text-[10px] font-black border border-gray-700 dark:border-gray-800 hover:bg-poke-red dark:hover:bg-red-700 transition-all rounded">
-                VOLVER AL ÍNDICE
+                BACK TO INDEX
             </a>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white dark:bg-gray-800 p-6 shadow-sm border-t-4 border-poke-dark dark:border-gray-600 text-center transition-colors duration-300 rounded">
-            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1 transition-colors">Potencia</p>
+            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1 transition-colors">Power</p>
             <p class="text-4xl font-black text-poke-dark dark:text-white transition-colors">@(Model.power > 0 ? Model.power.ToString() : "—")</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 shadow-sm border-t-4 border-poke-dark dark:border-gray-600 text-center transition-colors duration-300 rounded">
-            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1 transition-colors">Precisión</p>
+            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1 transition-colors">Accuracy</p>
             <p class="text-4xl font-black text-poke-dark dark:text-white transition-colors">@(Model.accuracy > 0 ? Model.accuracy.ToString() + "%" : "—")</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 shadow-sm border-t-4 border-poke-dark dark:border-gray-600 text-center transition-colors duration-300 rounded">
-            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1 transition-colors">PP Máximos</p>
+            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1 transition-colors">Max PP</p>
             <p class="text-4xl font-black text-poke-dark dark:text-white transition-colors">@Model.pp</p>
         </div>
     </div>
 
     <div class="bg-white dark:bg-gray-800 shadow-xl border-t-4 border-poke-red dark:border-red-600 transition-colors duration-300 rounded">
         <div class="bg-poke-dark dark:bg-black p-4 flex justify-between items-center transition-colors rounded-t">
-            <h2 class="text-white dark:text-gray-100 font-black uppercase tracking-widest text-[10px] transition-colors">Especies compatibles con esta técnica</h2>
+            <h2 class="text-white dark:text-gray-100 font-black uppercase tracking-widest text-[10px] transition-colors">Species compatible with this technique</h2>
             <span class="text-poke-red dark:text-red-500 font-black text-xl transition-colors">@(pokemonList?.Count() ?? 0)</span>
         </div>
         <div class="p-6">
@@ -71,7 +71,7 @@
             else
             {
                 <div class="py-12 text-center text-gray-300 dark:text-gray-600 font-bold uppercase text-[10px] tracking-widest italic transition-colors">
-                    No hay registros de compatibilidad detectados.
+                    No compatibility records found.
                 </div>
             }
         </div>

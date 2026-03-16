@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<PokeWiki.Web.Data.Views.MovimientosView>
 
 @{
-    ViewData["Title"] = "Índice de Máquinas Técnicas";
+    ViewData["Title"] = "Technical Machine Index";
     string? busquedaActual = ViewData["CurrentSearch"]?.ToString();
 
     (string Light, string Dark) GetDiscColors(string? tipo)
@@ -70,28 +70,28 @@
 
 <div class="space-y-6">
     <div class="border-l-8 border-poke-red pl-6 py-2 bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
-        <h1 class="text-4xl font-black uppercase tracking-tighter text-poke-dark dark:text-white transition-colors">Registro de Máquinas Técnicas (MT)</h1>
+        <h1 class="text-4xl font-black uppercase tracking-tighter text-poke-dark dark:text-white transition-colors">Technical Machine Registry (TM)</h1>
     </div>
 
     <div class="bg-poke-dark dark:bg-black p-4 flex flex-col md:flex-row gap-4 items-center justify-between rounded-lg transition-colors">
         <form asp-controller="Moves" asp-action="Index" method="get" class="relative w-full md:w-96 flex gap-2">
-            <input type="text" name="search" value="@busquedaActual" placeholder="BUSCAR MT O MOVIMIENTO..."
+            <input type="text" name="search" value="@busquedaActual" placeholder="SEARCH TM OR MOVE..."
                    class="w-full bg-gray-800 dark:bg-gray-900 border-none text-white dark:text-gray-100 placeholder-gray-500 py-2 px-4 focus:ring-2 focus:ring-poke-red uppercase text-xs font-bold tracking-widest outline-none transition-colors" />
-            <button type="submit" class="bg-poke-red text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest hover:bg-red-700 transition-colors">Buscar</button>
+            <button type="submit" class="bg-poke-red text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest hover:bg-red-700 transition-colors">Search</button>
             @if (!string.IsNullOrEmpty(busquedaActual))
             {
                 <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest flex items-center">X</a>
             }
         </form>
         <div class="text-white dark:text-gray-300 text-[10px] font-bold uppercase tracking-widest transition-colors">
-            MTs Disponibles: <span class="text-poke-red dark:text-red-500 text-lg ml-2">@Model.Count()</span>
+            Available TMs: <span class="text-poke-red dark:text-red-500 text-lg ml-2">@Model.Count()</span>
         </div>
     </div>
 
     @if (!Model.Any())
     {
         <div class="text-center py-20 bg-white dark:bg-gray-800 rounded-lg shadow border-2 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500 uppercase text-xs font-bold tracking-widest transition-colors">
-            No se encontraron máquinas técnicas
+            No technical machines found
         </div>
     }
     else
