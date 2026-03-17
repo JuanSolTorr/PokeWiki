@@ -2,14 +2,15 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
-    var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
+    var userName = User.Identity?.IsAuthenticated == true
+        ? User.Identity?.Name
+        : HttpContextAccessor.HttpContext?.Session.GetString("User");
 }
 
 <ul class="flex items-center space-x-4">
     @if (!string.IsNullOrEmpty(userName))
     {
         <li>
-            <!-- Changed to be a link to Account controller and Profile action -->
             <a asp-controller="Account" asp-action="Profile" class="group cursor-pointer">
                 <span class="text-gray-300 text-sm font-bold">Trainer: <span class="text-white group-hover:text-poke-gold transition-colors underline decoration-dotted underline-offset-4">@userName</span></span>
             </a>

@@ -1,0 +1,114 @@
+@model IEnumerable<PokeWiki.Web.Data.Views.MovimientosView>
+
+@{
+    string? busquedaActual = ViewData["CurrentSearch"]?.ToString();
+
+    (string Light, string Dark) GetDiscColors(string? tipo)
+    {
+        return (tipo?.Trim().ToLowerInvariant()) switch
+        {
+            "normal" => ("#E5E7EB", "#9CA3AF"),
+            "fuego" => ("#FDBA74", "#F97316"),
+            "fire" => ("#FDBA74", "#F97316"),
+            "agua" => ("#93C5FD", "#2563EB"),
+            "water" => ("#93C5FD", "#2563EB"),
+            "planta" => ("#86EFAC", "#16A34A"),
+            "grass" => ("#86EFAC", "#16A34A"),
+            "eléctrico" => ("#FDE047", "#EAB308"),
+            "electrico" => ("#FDE047", "#EAB308"),
+            "electric" => ("#FDE047", "#EAB308"),
+            "hielo" => ("#BAE6FD", "#0EA5E9"),
+            "ice" => ("#BAE6FD", "#0EA5E9"),
+            "lucha" => ("#FCA5A5", "#DC2626"),
+            "fighting" => ("#FCA5A5", "#DC2626"),
+            "veneno" => ("#D8B4FE", "#9333EA"),
+            "poison" => ("#D8B4FE", "#9333EA"),
+            "tierra" => ("#FCD34D", "#D97706"),
+            "ground" => ("#FCD34D", "#D97706"),
+            "volador" => ("#BFDBFE", "#6366F1"),
+            "flying" => ("#BFDBFE", "#6366F1"),
+            "psíquico" => ("#F9A8D4", "#EC4899"),
+            "psiquico" => ("#F9A8D4", "#EC4899"),
+            "psychic" => ("#F9A8D4", "#EC4899"),
+            "bicho" => ("#BEF264", "#65A30D"),
+            "bug" => ("#BEF264", "#65A30D"),
+            "roca" => ("#E7E5E4", "#78716C"),
+            "rock" => ("#E7E5E4", "#78716C"),
+            "fantasma" => ("#C4B5FD", "#7C3AED"),
+            "ghost" => ("#C4B5FD", "#7C3AED"),
+            "dragón" => ("#A5B4FC", "#4F46E5"),
+            "dragon" => ("#A5B4FC", "#4F46E5"),
+            "siniestro" => ("#D6D3D1", "#1C1917"),
+            "dark" => ("#D6D3D1", "#1C1917"),
+            "acero" => ("#E2E8F0", "#475569"),
+            "steel" => ("#E2E8F0", "#475569"),
+            "hada" => ("#FBCFE8", "#DB2777"),
+            "fairy" => ("#FBCFE8", "#DB2777"),
+            _ => ("#D1D5DB", "#6B7280")
+        };
+    }
+}
+
+<div class="bg-poke-dark dark:bg-black p-4 flex flex-col md:flex-row gap-4 items-center justify-between rounded-lg transition-colors">
+    <form asp-controller="Moves" asp-action="Index" method="get" class="relative w-full md:w-96 flex gap-2 js-moves-ajax-form">
+        <input type="text" name="search" value="@busquedaActual" placeholder="SEARCH TM OR MOVE..."
+               class="w-full bg-gray-800 dark:bg-gray-900 border-none text-white dark:text-gray-100 placeholder-gray-500 py-2 px-4 focus:ring-2 focus:ring-poke-red uppercase text-xs font-bold tracking-widest outline-none transition-colors" />
+        <button type="submit" class="bg-poke-red text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest hover:bg-red-700 transition-colors">Search</button>
+        @if (!string.IsNullOrEmpty(busquedaActual))
+        {
+            <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 uppercase text-[10px] font-black tracking-widest flex items-center js-moves-ajax-link">X</a>
+        }
+    </form>
+    <div class="text-white dark:text-gray-300 text-[10px] font-bold uppercase tracking-widest transition-colors">
+        Available TMs: <span class="text-poke-red dark:text-red-500 text-lg ml-2">@Model.Count()</span>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-20 bg-white dark:bg-gray-800 rounded-lg shadow border-2 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500 uppercase text-xs font-bold tracking-widest transition-colors">
+        No technical machines found
+    </div>
+}
+else
+{
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        @foreach (var move in Model)
+        {
+            var disc = GetDiscColors(move.tipo);
+
+            <a asp-action="Details" asp-route-id="@move.id"
+               class="group bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-xl p-4 border-2 border-transparent hover:border-poke-red dark:hover:border-red-500 transition-all duration-300 flex items-center gap-4">
+                <div class="relative w-16 h-16 flex-shrink-0">
+                    <div class="w-16 h-16 rounded-full border-2 border-gray-400 dark:border-gray-600 shadow-inner group-hover:rotate-12 transition-transform duration-300"
+                         style="background: conic-gradient(@disc.Light 0deg 45deg, #F5E6CC 45deg 90deg, @disc.Dark 90deg 135deg, #FFF7ED 135deg 180deg, @disc.Light 180deg 225deg, #F5E6CC 225deg 270deg, @disc.Dark 270deg 315deg, #FFF7ED 315deg 360deg);"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div class="w-5 h-5 rounded-full bg-black border-2 border-gray-500"></div>
+                    </div>
+                    <span class="absolute -bottom-1 -right-2 bg-poke-dark dark:bg-black text-white text-[8px] px-1.5 py-0.5 rounded font-black uppercase tracking-tight border border-gray-600">
+                        @move.mt_numero
+                    </span>
+                </div>
+
+                <div class="flex-grow min-w-0">
+                    <h3 class="font-black text-poke-dark dark:text-white uppercase truncate text-sm mb-1 group-hover:text-poke-red dark:group-hover:text-red-400 transition-colors">
+                        @move.movimiento
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[8px] font-bold px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded uppercase transition-colors">
+                            @move.tipo
+                        </span>
+                        <span class="text-[8px] font-bold px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded uppercase transition-colors">
+                            @move.clase_daño
+                        </span>
+                    </div>
+                </div>
+
+                <div class="text-right flex-shrink-0">
+                    <div class="text-[10px] text-gray-400 dark:text-gray-500 font-bold mb-1 transition-colors">PWR</div>
+                    <div class="font-black text-poke-dark dark:text-white transition-colors">@(move.power > 0 ? move.power.ToString() : "—")</div>
+                </div>
+            </a>
+        }
+    </div>
+}

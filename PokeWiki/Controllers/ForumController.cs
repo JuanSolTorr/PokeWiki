@@ -1,18 +1,23 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PokeWiki.Web.Models.ViewModels;
+using PokeWiki.Web.Repositories;
 
 namespace PokeWiki.Web.Controllers
 {
     public class ForumController : Controller
     {
-        private static readonly List<ForumCommentVM> _comments = new();
-        private static readonly object _sync = new();
+        private readonly RepositoryForum _repository;
+
+        public ForumController(RepositoryForum repository)
+        {
+            _repository = repository;
+        }
 
         [HttpGet]
         public IActionResult Index()
         {
-            var model = BuildModel();
+            var model = _repository.BuildModel();
             ViewData["Section"] = "Community";
             return View(model);
         }
@@ -29,46 +34,31 @@ namespace PokeWiki.Web.Controllers
 
             if (!ModelState.IsValid)
             {
+                if (IsAjaxRequest())
+                {
+                    return BadRequest();
+                }
+
                 ViewData["Section"] = "Community";
-                model.Comments = GetOrderedComments();
+                model.Comments = _repository.GetOrderedComments();
                 return View("Index", model);
             }
 
-            lock (_sync)
+            _repository.AddComment(userName, model.NewMessage);
+
+            if (IsAjaxRequest())
             {
-                _comments.Add(new ForumCommentVM
-                {
-                    UserName = userName,
-                    PublishedAt = DateTime.Now,
-                    Message = model.NewMessage.Trim()
-                });
+                var comments = _repository.GetOrderedComments();
+                return PartialView("_ForumComments", comments);
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        private static List<ForumCommentVM> GetOrderedComments()
+        private bool IsAjaxRequest()
         {
-            lock (_sync)
-            {
-                return _comments
-                    .OrderByDescending(c => c.PublishedAt)
-                    .Select(c => new ForumCommentVM
-                    {
-                        UserName = c.UserName,
-                        PublishedAt = c.PublishedAt,
-                        Message = c.Message
-                    })
-                    .ToList();
-            }
-        }
-
-        private ForumIndexVM BuildModel()
-        {
-            return new ForumIndexVM
-            {
-                Comments = GetOrderedComments()
-            };
+            return Request.Headers.TryGetValue("X-Requested-With", out var requestedWith)
+                   && requestedWith == "XMLHttpRequest";
         }
     }
 }

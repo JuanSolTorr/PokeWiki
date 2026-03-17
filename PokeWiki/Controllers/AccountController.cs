@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PokeWiki.Web.Data.Entities;
 using PokeWiki.Web.Repositories;
+using System.Security.Claims;
 
 namespace PokeWiki.Web.Controllers
 {
@@ -16,11 +20,24 @@ namespace PokeWiki.Web.Controllers
         public IActionResult Register() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(string username, string email, string password)
         {
+            if (!IsValidPassword(password))
+            {
+                ViewBag.Error = "Password must have at least 8 characters.";
+                return View();
+            }
+
+            if (await _repo.ExistsEmailAsync(email))
+            {
+                ViewBag.Error = "Email is already in use.";
+                return View();
+            }
+
             await _repo.RegisterUserAsync(username, email, password);
-            HttpContext.Session.SetString("User", username);
-            HttpContext.Session.SetString("Email", email); // Guardamos el email para operaciones de cuenta
+            await SignInUserAsync(username, email);
+            SetUserSession(username, email);
 
             return RedirectToAction("Index", "Pokemon");
         }
@@ -28,6 +45,7 @@ namespace PokeWiki.Web.Controllers
         public IActionResult Login() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string password)
         {
             Usuario? user = await _repo.LogInUserAsync(email, password);
@@ -38,52 +56,60 @@ namespace PokeWiki.Web.Controllers
                 return View();
             }
 
-            HttpContext.Session.SetString("User", user.Username);
-            HttpContext.Session.SetString("Email", user.Email); // Guardamos el email
-            
+            await SignInUserAsync(user.Username, user.Email);
+            SetUserSession(user.Username, user.Email);
             return RedirectToAction("Index", "Pokemon");
         }
 
         [HttpPost]
-        public IActionResult Logout()
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
         }
 
-        // Nueva acción para la vista del Perfil
-        public async Task<IActionResult> Profile()
+        [Authorize]
+        public IActionResult Profile()
         {
-            var email = HttpContext.Session.GetString("Email");
-            if (string.IsNullOrEmpty(email))
+            if (!TryGetCurrentEmail(out var email))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            // Podrías cargar datos adicionales del usuario desde la BBDD si lo requieres
-            ViewData["UserName"] = HttpContext.Session.GetString("User");
-            ViewData["Email"] = email;
-            
+            LoadProfileViewData(email);
             return View();
         }
 
-        // Acción para gestionar ajustes (Theme, ChangePassword, DeleteAccount)
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> ChangeTheme(string theme)
+        [ValidateAntiForgeryToken]
+        public IActionResult ChangeTheme(string theme)
         {
-            // Implementación de cambio de tema (podría guardarse en cookies o sesión)
             Response.Cookies.Append("theme", theme, new CookieOptions { Expires = DateTimeOffset.Now.AddYears(1) });
             return RedirectToAction("Profile");
         }
 
+        [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword)
         {
-            var email = HttpContext.Session.GetString("Email");
-            if (string.IsNullOrEmpty(email)) return RedirectToAction("Login");
+            if (!TryGetCurrentEmail(out var email))
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (!IsValidPassword(newPassword))
+            {
+                ViewBag.PasswordError = "New password must have at least 8 characters.";
+                LoadProfileViewData(email);
+                return View("Profile");
+            }
 
             bool success = await _repo.ChangePasswordAsync(email, currentPassword, newPassword);
-            
+
             if (!success)
             {
                 ViewBag.PasswordError = "Current password is incorrect or an error occurred.";
@@ -93,25 +119,73 @@ namespace PokeWiki.Web.Controllers
                 ViewBag.PasswordSuccess = "Password updated successfully.";
             }
 
+            LoadProfileViewData(email);
             return View("Profile");
         }
 
+        [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAccount(string confirmPassword)
         {
-            var email = HttpContext.Session.GetString("Email");
-            if (string.IsNullOrEmpty(email)) return RedirectToAction("Login");
+            if (!TryGetCurrentEmail(out var email))
+            {
+                return RedirectToAction("Login");
+            }
 
             bool success = await _repo.DeleteAccountAsync(email, confirmPassword);
-            
+
             if (!success)
             {
                 ViewBag.DeleteError = "Incorrect password. Account could not be deleted.";
+                LoadProfileViewData(email);
                 return View("Profile");
             }
 
             HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Pokemon");
         }
+
+        private async Task SignInUserAsync(string userName, string email)
+        {
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name, userName),
+                new(ClaimTypes.Email, email)
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal,
+                new AuthenticationProperties { IsPersistent = true });
+        }
+
+        private void SetUserSession(string userName, string email)
+        {
+            HttpContext.Session.SetString("User", userName);
+            HttpContext.Session.SetString("Email", email);
+        }
+
+        private bool TryGetCurrentEmail(out string email)
+        {
+            email = User.FindFirstValue(ClaimTypes.Email)
+                ?? HttpContext.Session.GetString("Email")
+                ?? string.Empty;
+
+            return !string.IsNullOrWhiteSpace(email);
+        }
+
+        private void LoadProfileViewData(string email)
+        {
+            ViewData["UserName"] = User.Identity?.Name ?? HttpContext.Session.GetString("User");
+            ViewData["Email"] = email;
+        }
+
+        private static bool IsValidPassword(string password)
+            => !string.IsNullOrWhiteSpace(password) && password.Length >= 8;
     }
 }

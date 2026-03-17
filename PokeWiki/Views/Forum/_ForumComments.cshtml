@@ -1,0 +1,15 @@
+@model IEnumerable<PokeWiki.Web.Models.ViewModels.ForumCommentVM>
+
+@if (!Model.Any())
+{
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center text-xs uppercase tracking-widest font-bold text-gray-400 dark:text-gray-500">
+        No comments yet. Be the first to post!
+    </div>
+}
+else
+{
+    @foreach (var comment in Model)
+    {
+        <partial name="_Comment" model="comment" />
+    }
+}

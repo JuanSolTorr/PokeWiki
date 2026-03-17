@@ -14,74 +14,56 @@ namespace PokeWiki.Web.Repositories
             _context = context;
         }
 
+        public async Task<bool> ExistsEmailAsync(string email)
+        {
+            return await _context.Usuarios.AnyAsync(u => u.Email == email);
+        }
+
         public async Task RegisterUserAsync(string username, string email, string password)
         {
-            Usuario user = new Usuario
+            var user = new Usuario
             {
                 Username = username,
                 Email = email,
-                Contrasenia = password
+                Contrasenia = string.Empty
             };
 
-            string salt = HelperTools.GenerarSalt();
-            byte[] passBytes = HelperCryptography.EncryptPassword(password, salt);
-            string hashString = Convert.ToBase64String(passBytes);
+            var (salt, hashString) = CreatePasswordData(password);
 
-            UsuarioAuxiliar aux = new UsuarioAuxiliar
+            user.UsuarioAuxiliar = new UsuarioAuxiliar
             {
                 Salt = salt,
                 Contrasenia_Hasheada = hashString
             };
 
-            user.UsuarioAuxiliar = aux;
             await _context.Usuarios.AddAsync(user);
             await _context.SaveChangesAsync();
         }
 
         public async Task<Usuario?> LogInUserAsync(string email, string password)
         {
-            Usuario? user = await _context.Usuarios
-                                          .Include(u => u.UsuarioAuxiliar)
-                                          .FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null) return null;
-
-            string salt = user.UsuarioAuxiliar.Salt;
-            byte[] hashGuardado = Convert.FromBase64String(user.UsuarioAuxiliar.Contrasenia_Hasheada);
-
-            byte[] tempHash = HelperCryptography.EncryptPassword(password, salt);
-
-            if (HelperTools.CompareArrays(tempHash, hashGuardado))
+            var user = await GetUserWithSecurityDataAsync(email);
+            if (user == null)
             {
-                return user;
+                return null;
             }
-            return null;
+
+            return IsPasswordValid(password, user.UsuarioAuxiliar) ? user : null;
         }
 
         public async Task<bool> ChangePasswordAsync(string email, string currentPassword, string newPassword)
         {
-            Usuario? user = await _context.Usuarios
-                .Include(u => u.UsuarioAuxiliar)
-                .FirstOrDefaultAsync(u => u.Email == email);
-
-            if (user == null) return false;
-
-            // Verificar contraseña actual
-            string currentSalt = user.UsuarioAuxiliar.Salt;
-            byte[] hashGuardado = Convert.FromBase64String(user.UsuarioAuxiliar.Contrasenia_Hasheada);
-            byte[] tempCurrentHash = HelperCryptography.EncryptPassword(currentPassword, currentSalt);
-
-            if (!HelperTools.CompareArrays(tempCurrentHash, hashGuardado))
+            var user = await GetUserWithSecurityDataAsync(email);
+            if (user == null || !IsPasswordValid(currentPassword, user.UsuarioAuxiliar))
             {
-                return false; // Contraseña actual incorrecta
+                return false;
             }
 
-            // Generar y guardar nueva contraseña
-            string newSalt = HelperTools.GenerarSalt();
-            byte[] newPassBytes = HelperCryptography.EncryptPassword(newPassword, newSalt);
-            
-            user.Contrasenia = newPassword; // Reflejando plano si así lo gestionabas o ignorar si solo usas el hash
+            var (newSalt, newHash) = CreatePasswordData(newPassword);
+
+            user.Contrasenia = string.Empty;
             user.UsuarioAuxiliar.Salt = newSalt;
-            user.UsuarioAuxiliar.Contrasenia_Hasheada = Convert.ToBase64String(newPassBytes);
+            user.UsuarioAuxiliar.Contrasenia_Hasheada = newHash;
 
             _context.Usuarios.Update(user);
             await _context.SaveChangesAsync();
@@ -90,27 +72,37 @@ namespace PokeWiki.Web.Repositories
 
         public async Task<bool> DeleteAccountAsync(string email, string confirmPassword)
         {
-            Usuario? user = await _context.Usuarios
-                .Include(u => u.UsuarioAuxiliar)
-                .FirstOrDefaultAsync(u => u.Email == email);
-
-            if (user == null) return false;
-
-            // Verificar contraseña
-            string salt = user.UsuarioAuxiliar.Salt;
-            byte[] hashGuardado = Convert.FromBase64String(user.UsuarioAuxiliar.Contrasenia_Hasheada);
-            byte[] tempHash = HelperCryptography.EncryptPassword(confirmPassword, salt);
-
-            if (!HelperTools.CompareArrays(tempHash, hashGuardado))
+            var user = await GetUserWithSecurityDataAsync(email);
+            if (user == null || !IsPasswordValid(confirmPassword, user.UsuarioAuxiliar))
             {
-                return false; // Contraseña de confirmación incorrecta
+                return false;
             }
 
             _context.Usuarios.Remove(user);
-            // La entidad auxiliar se eliminará por el DeleteBehavior.Cascade configurado en ApplicationDbContext
-            
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        private async Task<Usuario?> GetUserWithSecurityDataAsync(string email)
+        {
+            return await _context.Usuarios
+                .Include(u => u.UsuarioAuxiliar)
+                .FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        private static (string Salt, string Hash) CreatePasswordData(string password)
+        {
+            var salt = HelperTools.GenerarSalt();
+            var passBytes = HelperCryptography.EncryptPassword(password, salt);
+            var hashString = Convert.ToBase64String(passBytes);
+            return (salt, hashString);
+        }
+
+        private static bool IsPasswordValid(string password, UsuarioAuxiliar securityData)
+        {
+            var hashGuardado = Convert.FromBase64String(securityData.Contrasenia_Hasheada);
+            var tempHash = HelperCryptography.EncryptPassword(password, securityData.Salt);
+            return HelperTools.CompareArrays(tempHash, hashGuardado);
         }
     }
 }

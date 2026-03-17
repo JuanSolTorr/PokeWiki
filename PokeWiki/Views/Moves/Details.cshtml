@@ -1,8 +1,9 @@
 ﻿@model PokeWiki.Web.Data.Views.MovimientosView
+@using PokeWiki.Web.Models.ViewModels
 
 @{
     ViewData["Title"] = "Technical Record: " + Model.movimiento;
-    var pokemonList = ViewBag.PokemonCompatibles as IEnumerable<dynamic>;
+    var pokemonList = ViewBag.PokemonCompatibles as IEnumerable<PokemonCompatibleMoveVM>;
 }
 
 <div class="space-y-6 max-w-6xl mx-auto pb-12">
@@ -57,12 +58,12 @@
                 <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10 gap-3">
                     @foreach (var pk in pokemonList)
                     {
-                        <a asp-controller="Pokemon" asp-action="Details" asp-route-id="@pk.id"
+                        <a asp-controller="Pokemon" asp-action="Details" asp-route-id="@pk.Id"
                            class="group flex flex-col items-center p-2 bg-gray-50 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600 border border-transparent hover:border-poke-red dark:hover:border-red-500 transition-all rounded shadow-sm">
-                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/@(pk.id).png"
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/@(pk.Id).png"
                                  class="w-14 h-14 object-contain group-hover:scale-110 transition-transform drop-shadow" />
                             <p class="mt-1 text-[8px] font-black uppercase text-center text-gray-500 dark:text-gray-300 group-hover:text-poke-red dark:group-hover:text-red-400 truncate w-full transition-colors">
-                                @pk.nombre
+                                @pk.Nombre
                             </p>
                         </a>
                     }
