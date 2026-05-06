@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PokéWiki</title>
+    <link rel="icon" type="image/png" href="~/favicon.png" />
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
@@ -79,12 +80,39 @@
                         </a>
                     </div>
 
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <button id="mobile-menu-toggle" class="md:hidden inline-flex items-center justify-center rounded-md text-white hover:text-poke-gold hover:bg-white/10 transition-colors p-2" aria-expanded="false" aria-controls="mobile-menu">
+                            <span class="sr-only">Abrir menú</span>
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
                         <div class="h-8 w-px bg-red-400 dark:bg-red-700 mx-2 hidden md:block transition-colors"></div>
                         <partial name="_LoginPartial" />
                     </div>
                 </div>
             </nav>
+
+            <div id="mobile-menu" class="md:hidden hidden border-t border-red-300/40 dark:border-red-800/60 bg-poke-red dark:bg-red-900">
+                <div class="px-4 py-4 space-y-2">
+                    <a asp-controller="Pokemon" asp-action="Index"
+                       class="block text-white px-3 py-2 rounded-md text-sm font-bold hover:bg-white dark:hover:bg-gray-800 hover:text-poke-red dark:hover:text-poke-red transition-colors uppercase tracking-wider">
+                        Pokédex
+                    </a>
+                    <a asp-controller="Moves" asp-action="Index"
+                       class="block text-white px-3 py-2 rounded-md text-sm font-bold hover:bg-white dark:hover:bg-gray-800 hover:text-poke-red transition-colors uppercase tracking-wider">
+                        Moves
+                    </a>
+                    <a asp-controller="Objects" asp-action="Index"
+                       class="block text-white px-3 py-2 rounded-md text-sm font-bold hover:bg-white dark:hover:bg-gray-800 hover:text-poke-red transition-colors uppercase tracking-wider">
+                        Items
+                    </a>
+                    <a asp-controller="Forum" asp-action="Index"
+                       class="block text-white px-3 py-2 rounded-md text-sm font-bold hover:bg-white dark:hover:bg-gray-800 hover:text-poke-red transition-colors uppercase tracking-wider">
+                        Community
+                    </a>
+                </div>
+            </div>
         </header>
     }
 

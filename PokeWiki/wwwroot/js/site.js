@@ -112,8 +112,21 @@
         });
     }
 
+    function initMobileMenu() {
+        var toggle = document.getElementById('mobile-menu-toggle');
+        var menu = document.getElementById('mobile-menu');
+        if (!toggle || !menu) return;
+
+        toggle.addEventListener('click', function () {
+            var isHidden = menu.classList.toggle('hidden') === false;
+            toggle.setAttribute('aria-expanded', isHidden.toString());
+        });
+    }
+
     window.PokeWikiAjax = {
         initAjaxListNavigation: initAjaxListNavigation,
         initAjaxForumForm: initAjaxForumForm
     };
+
+    initMobileMenu();
 })();
