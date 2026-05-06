@@ -1,32 +1,36 @@
 using Microsoft.AspNetCore.Mvc;
-using PokeWiki.Web.Repositories;
+using PokeWiki.Web.ApiClients;
+using NugetPokeWiki.DTOs;
 
 namespace PokeWiki.Web.Controllers
 {
     public class ObjectsController : Controller
     {
         private static readonly string[] _categorias = ["Evolution", "Battle", "Berries", "Healing", "Poké Balls", "Key Items"];
-        private readonly RepositoryObjects _repository;
+        private readonly ObjectsApiClient _apiClient;
 
-        public ObjectsController(RepositoryObjects repository)
+        public ObjectsController(ObjectsApiClient apiClient)
         {
-            _repository = repository;
+            _apiClient = apiClient;
         }
 
         public async Task<IActionResult> Index(string? categoria, string? search, int page = 1)
         {
-            const int pageSize = 24;
-
-            var (objetos, totalRegistros, totalPaginas, currentPage) =
-                await _repository.GetObjectsPageAsync(categoria, search, page, pageSize);
+            var response = await _apiClient.GetObjectsPageAsync(categoria, search, page);
 
             ViewData["Section"] = "Items";
             ViewData["CategoriaActual"] = categoria;
             ViewData["Categorias"] = _categorias;
             ViewData["CurrentSearch"] = search;
-            ViewBag.PaginaActual = currentPage;
-            ViewBag.TotalPaginas = totalPaginas;
-            ViewBag.TotalRegistros = totalRegistros;
+
+            if (response != null)
+            {
+                ViewBag.PaginaActual = response.PaginaActual;
+                ViewBag.TotalPaginas = response.TotalPaginas;
+                ViewBag.TotalRegistros = response.TotalRegistros;
+            }
+
+            var objetos = response?.Items ?? new List<ObjetoDto>();
 
             if (IsAjaxRequest())
             {
@@ -38,7 +42,7 @@ namespace PokeWiki.Web.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var objeto = await _repository.GetObjectDetailAsync(id);
+            var objeto = await _apiClient.GetObjectDetailAsync(id);
             if (objeto is null)
             {
                 return NotFound();

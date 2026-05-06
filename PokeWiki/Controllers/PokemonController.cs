@@ -1,49 +1,44 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PokeWiki.Web.Repositories;
+using PokeWiki.Web.ApiClients;
+using NugetPokeWiki.DTOs;
 
 namespace PokeWiki.Web.Controllers
 {
     public class PokemonController : Controller
     {
-        private readonly RepositoryPokemon _repository;
+        private readonly PokemonApiClient _apiClient;
 
-        public PokemonController(RepositoryPokemon repository)
+        public PokemonController(PokemonApiClient apiClient)
         {
-            _repository = repository;
+            _apiClient = apiClient;
         }
 
         public async Task<IActionResult> Index(string? search, int page = 1)
         {
-            const int registrosPorPagina = 24;
+            var response = await _apiClient.GetPokemonPageAsync(search, page);
 
-            var (pokemon, totalRegistros, totalPaginas, currentPage) = await _repository.GetPokemonPageAsync(search, page, registrosPorPagina);
+            if (response == null) return View(new List<PokemonListDto>());
 
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                ViewData["CurrentSearch"] = search;
-            }
+            if (!string.IsNullOrWhiteSpace(search)) ViewData["CurrentSearch"] = search;
 
-            ViewBag.PaginaActual = currentPage;
-            ViewBag.TotalPaginas = totalPaginas;
-            ViewBag.TotalRegistros = totalRegistros;
+            ViewBag.PaginaActual = response.PaginaActual;
+            ViewBag.TotalPaginas = response.TotalPaginas;
+            ViewBag.TotalRegistros = response.TotalRegistros;
 
             if (IsAjaxRequest())
             {
-                return PartialView("_PokemonIndexContent", pokemon);
+                return PartialView("_PokemonIndexContent", response.Items);
             }
 
-            return View(pokemon);
+            return View(response.Items);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _repository.GetPokemonDetailsAsync(id);
-            if (model == null)
-            {
-                return NotFound();
-            }
+            var pokemon = await _apiClient.GetPokemonDetailsAsync(id);
+            if (pokemon == null) return NotFound();
 
-            return View(model);
+            return View(pokemon);
         }
 
         private bool IsAjaxRequest()

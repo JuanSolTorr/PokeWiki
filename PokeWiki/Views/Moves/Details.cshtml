@@ -1,9 +1,8 @@
-﻿@model PokeWiki.Web.Data.Views.MovimientosView
-@using PokeWiki.Web.Models.ViewModels
+﻿@model NugetPokeWiki.DTOs.MovimientosDto
 
 @{
     ViewData["Title"] = "Technical Record: " + Model.movimiento;
-    var pokemonList = ViewBag.PokemonCompatibles as IEnumerable<PokemonCompatibleMoveVM>;
+    var pokemonList = ViewBag.PokemonCompatibles as IEnumerable<NugetPokeWiki.DTOs.PokemonCompatibleMoveDto>;
 }
 
 <div class="space-y-6 max-w-6xl mx-auto pb-12">

@@ -1,30 +1,31 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PokeWiki.Web.Models.ViewModels;
-using PokeWiki.Web.Repositories;
+using NugetPokeWiki.DTOs;
+using PokeWiki.Web.ApiClients;
+using static NugetPokeWiki.DTOs.ForumCommentDto;
 
 namespace PokeWiki.Web.Controllers
 {
     public class ForumController : Controller
     {
-        private readonly RepositoryForum _repository;
+        private readonly ForumApiClient _apiClient;
 
-        public ForumController(RepositoryForum repository)
+        public ForumController(ForumApiClient apiClient)
         {
-            _repository = repository;
+            _apiClient = apiClient;
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = _repository.BuildModel();
+            var comments = await _apiClient.GetCommentsAsync() ?? new List<ForumCommentDto>();
             ViewData["Section"] = "Community";
-            return View(model);
+            return View(comments); // Actualiza tu vista Index.cshtml para usar @model IEnumerable<ForumCommentDto>
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ForumIndexVM model)
+        public async Task<IActionResult> Create(string NewMessage)
         {
             var userName = HttpContext.Session.GetString("User");
             if (string.IsNullOrWhiteSpace(userName))
@@ -32,23 +33,23 @@ namespace PokeWiki.Web.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            if (!ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(NewMessage))
             {
-                if (IsAjaxRequest())
-                {
-                    return BadRequest();
-                }
-
-                ViewData["Section"] = "Community";
-                model.Comments = _repository.GetOrderedComments();
-                return View("Index", model);
+                if (IsAjaxRequest()) return BadRequest();
+                return RedirectToAction(nameof(Index));
             }
 
-            _repository.AddComment(userName, model.NewMessage);
+            var dto = new CreateForumCommentDto
+            {
+                UserName = userName,
+                Message = NewMessage
+            };
+
+            await _apiClient.AddCommentAsync(dto);
 
             if (IsAjaxRequest())
             {
-                var comments = _repository.GetOrderedComments();
+                var comments = await _apiClient.GetCommentsAsync() ?? new List<ForumCommentDto>();
                 return PartialView("_ForumComments", comments);
             }
 

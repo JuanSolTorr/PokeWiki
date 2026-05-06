@@ -2,19 +2,19 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PokeWiki.Web.Data.Entities;
-using PokeWiki.Web.Repositories;
+using NugetPokeWiki.DTOs;
+using PokeWiki.Web.ApiClients; // <-- Usamos la nueva carpeta
 using System.Security.Claims;
 
 namespace PokeWiki.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly RepositoryUsuarios _repo;
+        private readonly AuthApiClient _apiClient;
 
-        public AccountController(RepositoryUsuarios repo)
+        public AccountController(AuthApiClient apiClient)
         {
-            _repo = repo;
+            _apiClient = apiClient;
         }
 
         public IActionResult Register() => View();
@@ -29,15 +29,18 @@ namespace PokeWiki.Web.Controllers
                 return View();
             }
 
-            if (await _repo.ExistsEmailAsync(email))
+            var registerDto = new UserRegisterDto { Username = username, Email = email, Password = password };
+            var response = await _apiClient.RegisterAsync(registerDto);
+
+            if (response == null)
             {
-                ViewBag.Error = "Email is already in use.";
+                ViewBag.Error = "Email is already in use or an error occurred.";
                 return View();
             }
 
-            await _repo.RegisterUserAsync(username, email, password);
-            await SignInUserAsync(username, email);
-            SetUserSession(username, email);
+            // Guardamos al usuario y su Token
+            await SignInUserAsync(response.Username, response.Email, response.Token);
+            SetUserSession(response.Username, response.Email);
 
             return RedirectToAction("Index", "Pokemon");
         }
@@ -48,16 +51,17 @@ namespace PokeWiki.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string password)
         {
-            Usuario? user = await _repo.LogInUserAsync(email, password);
+            var loginDto = new UserLoginDto { Email = email, Password = password };
+            var response = await _apiClient.LoginAsync(loginDto);
 
-            if (user == null)
+            if (response == null)
             {
                 ViewBag.Error = "Invalid credentials.";
                 return View();
             }
 
-            await SignInUserAsync(user.Username, user.Email);
-            SetUserSession(user.Username, user.Email);
+            await SignInUserAsync(response.Username, response.Email, response.Token);
+            SetUserSession(response.Username, response.Email);
             return RedirectToAction("Index", "Pokemon");
         }
 
@@ -73,10 +77,7 @@ namespace PokeWiki.Web.Controllers
         [Authorize]
         public IActionResult Profile()
         {
-            if (!TryGetCurrentEmail(out var email))
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            if (!TryGetCurrentEmail(out var email)) return RedirectToAction("Login", "Account");
 
             LoadProfileViewData(email);
             return View();
@@ -85,21 +86,9 @@ namespace PokeWiki.Web.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ChangeTheme(string theme)
-        {
-            Response.Cookies.Append("theme", theme, new CookieOptions { Expires = DateTimeOffset.Now.AddYears(1) });
-            return RedirectToAction("Profile");
-        }
-
-        [Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword)
         {
-            if (!TryGetCurrentEmail(out var email))
-            {
-                return RedirectToAction("Login");
-            }
+            if (!TryGetCurrentEmail(out var email)) return RedirectToAction("Login");
 
             if (!IsValidPassword(newPassword))
             {
@@ -108,16 +97,14 @@ namespace PokeWiki.Web.Controllers
                 return View("Profile");
             }
 
-            bool success = await _repo.ChangePasswordAsync(email, currentPassword, newPassword);
+            // Rescatamos el Token que guardamos en la cookie
+            var token = User.FindFirstValue("jwt_token") ?? string.Empty;
 
-            if (!success)
-            {
-                ViewBag.PasswordError = "Current password is incorrect or an error occurred.";
-            }
-            else
-            {
-                ViewBag.PasswordSuccess = "Password updated successfully.";
-            }
+            var dto = new ChangePasswordDto { CurrentPassword = currentPassword, NewPassword = newPassword };
+            bool success = await _apiClient.ChangePasswordAsync(dto, token);
+
+            if (!success) ViewBag.PasswordError = "Current password is incorrect or an error occurred.";
+            else ViewBag.PasswordSuccess = "Password updated successfully.";
 
             LoadProfileViewData(email);
             return View("Profile");
@@ -128,12 +115,10 @@ namespace PokeWiki.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAccount(string confirmPassword)
         {
-            if (!TryGetCurrentEmail(out var email))
-            {
-                return RedirectToAction("Login");
-            }
+            if (!TryGetCurrentEmail(out var email)) return RedirectToAction("Login");
 
-            bool success = await _repo.DeleteAccountAsync(email, confirmPassword);
+            var token = User.FindFirstValue("jwt_token") ?? string.Empty;
+            bool success = await _apiClient.DeleteAccountAsync(confirmPassword, token);
 
             if (!success)
             {
@@ -147,21 +132,28 @@ namespace PokeWiki.Web.Controllers
             return RedirectToAction("Index", "Pokemon");
         }
 
-        private async Task SignInUserAsync(string userName, string email)
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ChangeTheme(string theme)
+        {
+            Response.Cookies.Append("theme", theme, new CookieOptions { Expires = DateTimeOffset.Now.AddYears(1) });
+            return RedirectToAction("Profile");
+        }
+
+        private async Task SignInUserAsync(string userName, string email, string jwtToken)
         {
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Name, userName),
-                new(ClaimTypes.Email, email)
+                new(ClaimTypes.Email, email),
+                new("jwt_token", jwtToken) // ¡AQUÍ ESTÁ LA MAGIA! Guardamos el JWT en la sesión del MVC[cite: 4]
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal,
-                new AuthenticationProperties { IsPersistent = true });
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties { IsPersistent = true });
         }
 
         private void SetUserSession(string userName, string email)
@@ -172,10 +164,7 @@ namespace PokeWiki.Web.Controllers
 
         private bool TryGetCurrentEmail(out string email)
         {
-            email = User.FindFirstValue(ClaimTypes.Email)
-                ?? HttpContext.Session.GetString("Email")
-                ?? string.Empty;
-
+            email = User.FindFirstValue(ClaimTypes.Email) ?? HttpContext.Session.GetString("Email") ?? string.Empty;
             return !string.IsNullOrWhiteSpace(email);
         }
 
@@ -185,7 +174,6 @@ namespace PokeWiki.Web.Controllers
             ViewData["Email"] = email;
         }
 
-        private static bool IsValidPassword(string password)
-            => !string.IsNullOrWhiteSpace(password) && password.Length >= 8;
+        private static bool IsValidPassword(string password) => !string.IsNullOrWhiteSpace(password) && password.Length >= 8;
     }
 }

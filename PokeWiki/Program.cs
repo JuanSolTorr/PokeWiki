@@ -1,19 +1,18 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
-using PokeWiki.Web.Data;
+using PokeWiki.Web.ApiClients;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("SqlPokemon");
+var apiBaseUrl = builder.Configuration.GetValue<string>("ApiSettings:BaseUrl");
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<PokeWiki.Web.Repositories.RepositoryUsuarios>();
-builder.Services.AddTransient<PokeWiki.Web.Repositories.RepositoryMoves>();
-builder.Services.AddTransient<PokeWiki.Web.Repositories.RepositoryPokemon>();
-builder.Services.AddTransient<PokeWiki.Web.Repositories.RepositoryObjects>();
-builder.Services.AddTransient<PokeWiki.Web.Repositories.RepositoryForum>();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+
+builder.Services.AddHttpClient<AuthApiClient>(client => client.BaseAddress = new Uri(apiBaseUrl!));
+builder.Services.AddHttpClient<PokemonApiClient>(client => client.BaseAddress = new Uri(apiBaseUrl!));
+builder.Services.AddHttpClient<MovesApiClient>(client => client.BaseAddress = new Uri(apiBaseUrl!));
+builder.Services.AddHttpClient<ObjectsApiClient>(client => client.BaseAddress = new Uri(apiBaseUrl!));
+builder.Services.AddHttpClient<ForumApiClient>(client => client.BaseAddress = new Uri(apiBaseUrl!));
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddMemoryCache();
@@ -44,9 +43,10 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapStaticAssets();
-app.UseSession();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}")

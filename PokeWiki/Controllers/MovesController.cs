@@ -1,20 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PokeWiki.Web.Repositories;
+using PokeWiki.Web.ApiClients;
 
 namespace PokeWiki.Web.Controllers
 {
     public class MovesController : Controller
     {
-        private readonly RepositoryMoves _repository;
+        private readonly MovesApiClient _apiClient;
 
-        public MovesController(RepositoryMoves repository)
+        public MovesController(MovesApiClient apiClient)
         {
-            _repository = repository;
+            _apiClient = apiClient;
         }
 
         public async Task<IActionResult> Index(string? search)
         {
-            var moves = await _repository.GetMovesAsync(search);
+            var moves = await _apiClient.GetMovesAsync(search);
             ViewData["CurrentSearch"] = search;
 
             if (IsAjaxRequest())
@@ -27,13 +27,13 @@ namespace PokeWiki.Web.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var move = await _repository.FindMoveAsync(id);
+            var move = await _apiClient.GetMoveAsync(id);
             if (move == null)
             {
                 return NotFound();
             }
 
-            ViewBag.PokemonCompatibles = await _repository.GetCompatiblePokemonAsync(id);
+            ViewBag.PokemonCompatibles = await _apiClient.GetCompatiblePokemonAsync(id);
             return View(move);
         }
 
